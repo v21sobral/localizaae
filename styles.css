@@ -72,7 +72,7 @@
 
 /* ===== DARK MODE - LOGO GLOW ===== */
 [data-theme="dark"] .nav-logo img {
-  height: 220px;
+  height: 96px;
   width: auto;
   object-fit: contain;
 }

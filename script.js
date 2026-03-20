@@ -9,8 +9,7 @@ let ITEMS = [
   { id:2, type:'Encontrado', name:'iPhone 13 tela trincada',     cat:'Eletrônicos',  emoji:'📱', color:'#7C3AED', location:'Metrô Paulista, SP',           date:'16/03/2025', tags:['Apple','Preto','Desbloquead'], user:'Ana P.',     resolved:false },
   { id:3, type:'Perdido',    name:'Chave Honda Civic 2022',      cat:'Chaves',       emoji:'🔑', color:'#3B5BDB', location:'Shopping Recife, PE',          date:'14/03/2025', tags:['Honda','Civic','Azul'],       user:'Pedro L.',   resolved:false },
   { id:4, type:'Encontrado', name:'Mochila Nike preta',          cat:'Bolsas',       emoji:'🎒', color:'#7C3AED', location:'Parque Ibirapuera, SP',        date:'17/03/2025', tags:['Nike','Preta','Cadernos'],    user:'Marina S.',  resolved:false },
-  { id:5, type:'Perdido',    name:'Cachorro Pug chamado Toby',   cat:'Animais',      emoji:'🐶', color:'#EF4444', location:'Jardim Botânico, RJ',          date:'17/03/2025', tags:['Pug','Coleira vermelha'],     user:'Julia R.',   resolved:false },
-  { id:6, type:'Encontrado', name:'Óculos de grau armação azul', cat:'Outros',       emoji:'👓', color:'#7C3AED', location:'UFBA, Salvador - BA',          date:'13/03/2025', tags:['Óculos','Azul','Grau'],       user:'Lucas T.',   resolved:true  },
+  { id:5, type:'Encontrado', name:'Óculos de grau armação azul', cat:'Outros',       emoji:'👓', color:'#7C3AED', location:'UFBA, Salvador - BA',          date:'13/03/2025', tags:['Óculos','Azul','Grau'],       user:'Lucas T.',   resolved:true  },
   { id:7, type:'Perdido',    name:'Notebook Dell Inspiron',      cat:'Eletrônicos',  emoji:'💻', color:'#3B5BDB', location:'Biblioteca Parque, Niterói',   date:'12/03/2025', tags:['Dell','Cinza','Adesivos'],    user:'Bruna F.',   resolved:false },
   { id:8, type:'Encontrado', name:'Passaporte Brasileiro',       cat:'Documentos',   emoji:'📘', color:'#10B981', location:'Aeroporto Galeão, RJ',         date:'16/03/2025', tags:['Passaporte','Verde'],         user:'Roberto M.', resolved:false },
   { id:9, type:'Perdido',    name:'Brinco de ouro com diamante', cat:'Outros',       emoji:'💍', color:'#F59E0B', location:'Restaurante Figueira, SP',     date:'15/03/2025', tags:['Ouro','Diamante','Par'],      user:'Isabela C.', resolved:false },
@@ -184,7 +183,7 @@ function submitItem(type) {
   if (!name || !location) { showToast('⚠️ Preencha nome e local'); return; }
 
   const cat     = document.getElementById(`${p}-cat`).value;
-  const emojis  = { Documentos:'🪪', Eletrônicos:'📱', Chaves:'🔑', Carteiras:'👛', Roupas:'👕', Animais:'🐾', Bolsas:'👜', Outros:'📦' };
+  const emojis  = { Documentos:'🪪', Eletrônicos:'📱', Chaves:'🔑', Carteiras:'👛', Roupas:'👕', Bolsas:'👜', Outros:'📦' };
   const today   = new Date();
   const dateStr = `${String(today.getDate()).padStart(2,'0')}/${String(today.getMonth()+1).padStart(2,'0')}/${today.getFullYear()}`;
 
