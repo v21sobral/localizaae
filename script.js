@@ -5,30 +5,62 @@
 
 /* ===== DATA ===== */
 let ITEMS = [
-  { id:1, type:'Perdido',    name:'Carteira com documentos',     cat:'Carteiras',    emoji:'👛', color:'#3B5BDB', location:'Aeroporto de Congonhas, SP', date:'15/03/2025', tags:['RG','CNH','Preta'], user:'Carlos M.', resolved:false },
-  { id:2, type:'Encontrado', name:'iPhone 13 tela trincada',     cat:'Eletrônicos',  emoji:'📱', color:'#7C3AED', location:'Metrô Paulista, SP',          date:'16/03/2025', tags:['Apple','Preto','Desbloqueado'], user:'Ana P.', resolved:false },
-  { id:3, type:'Perdido',    name:'Chave Honda Civic 2022',      cat:'Chaves',       emoji:'🔑', color:'#3B5BDB', location:'Shopping Recife, PE',          date:'14/03/2025', tags:['Honda','Civic','Chaveiro azul'], user:'Pedro L.', resolved:false },
-  { id:4, type:'Encontrado', name:'Mochila Nike preta',          cat:'Bolsas',       emoji:'🎒', color:'#7C3AED', location:'Parque Ibirapuera, SP',        date:'17/03/2025', tags:['Nike','Preta','Cadernos'], user:'Marina S.', resolved:false },
-  { id:5, type:'Perdido',    name:'Cachorro Pug chamado Toby',   cat:'Animais',      emoji:'🐶', color:'#EF4444', location:'Jardim Botânico, RJ',          date:'17/03/2025', tags:['Pug','Coleira vermelha','Dócil'], user:'Julia R.', resolved:false },
-  { id:6, type:'Encontrado', name:'Óculos de grau armação azul', cat:'Outros',       emoji:'👓', color:'#7C3AED', location:'UFBA, Salvador - BA',          date:'13/03/2025', tags:['Óculos','Azul','Grau'], user:'Lucas T.', resolved:true },
-  { id:7, type:'Perdido',    name:'Notebook Dell Inspiron',      cat:'Eletrônicos',  emoji:'💻', color:'#3B5BDB', location:'Biblioteca Parque, Niterói',   date:'12/03/2025', tags:['Dell','Cinza','Adesivos'], user:'Bruna F.', resolved:false },
-  { id:8, type:'Encontrado', name:'Passaporte Brasileiro',       cat:'Documentos',   emoji:'📘', color:'#10B981', location:'Aeroporto Galeão, RJ',         date:'16/03/2025', tags:['Passaporte','Verde','Válido'], user:'Roberto M.', resolved:false },
-  { id:9, type:'Perdido',    name:'Brinco de ouro com diamante', cat:'Outros',       emoji:'💍', color:'#F59E0B', location:'Restaurante Figueira Rubaiyat', date:'15/03/2025', tags:['Ouro','Diamante','Par'], user:'Isabela C.', resolved:false },
+  { id:1, type:'Perdido',    name:'Carteira com documentos',     cat:'Carteiras',    emoji:'👛', color:'#3B5BDB', location:'Aeroporto de Congonhas, SP',  date:'15/03/2025', tags:['RG','CNH','Preta'],          user:'Carlos M.',  resolved:false },
+  { id:2, type:'Encontrado', name:'iPhone 13 tela trincada',     cat:'Eletrônicos',  emoji:'📱', color:'#7C3AED', location:'Metrô Paulista, SP',           date:'16/03/2025', tags:['Apple','Preto','Desbloquead'], user:'Ana P.',     resolved:false },
+  { id:3, type:'Perdido',    name:'Chave Honda Civic 2022',      cat:'Chaves',       emoji:'🔑', color:'#3B5BDB', location:'Shopping Recife, PE',          date:'14/03/2025', tags:['Honda','Civic','Azul'],       user:'Pedro L.',   resolved:false },
+  { id:4, type:'Encontrado', name:'Mochila Nike preta',          cat:'Bolsas',       emoji:'🎒', color:'#7C3AED', location:'Parque Ibirapuera, SP',        date:'17/03/2025', tags:['Nike','Preta','Cadernos'],    user:'Marina S.',  resolved:false },
+  { id:5, type:'Perdido',    name:'Cachorro Pug chamado Toby',   cat:'Animais',      emoji:'🐶', color:'#EF4444', location:'Jardim Botânico, RJ',          date:'17/03/2025', tags:['Pug','Coleira vermelha'],     user:'Julia R.',   resolved:false },
+  { id:6, type:'Encontrado', name:'Óculos de grau armação azul', cat:'Outros',       emoji:'👓', color:'#7C3AED', location:'UFBA, Salvador - BA',          date:'13/03/2025', tags:['Óculos','Azul','Grau'],       user:'Lucas T.',   resolved:true  },
+  { id:7, type:'Perdido',    name:'Notebook Dell Inspiron',      cat:'Eletrônicos',  emoji:'💻', color:'#3B5BDB', location:'Biblioteca Parque, Niterói',   date:'12/03/2025', tags:['Dell','Cinza','Adesivos'],    user:'Bruna F.',   resolved:false },
+  { id:8, type:'Encontrado', name:'Passaporte Brasileiro',       cat:'Documentos',   emoji:'📘', color:'#10B981', location:'Aeroporto Galeão, RJ',         date:'16/03/2025', tags:['Passaporte','Verde'],         user:'Roberto M.', resolved:false },
+  { id:9, type:'Perdido',    name:'Brinco de ouro com diamante', cat:'Outros',       emoji:'💍', color:'#F59E0B', location:'Restaurante Figueira, SP',     date:'15/03/2025', tags:['Ouro','Diamante','Par'],      user:'Isabela C.', resolved:false },
 ];
 
-let favorites        = JSON.parse(localStorage.getItem('lz_ae_favs') || '[]');
+let favorites        = JSON.parse(localStorage.getItem('lz_ae_favs')   || '[]');
 let currentUser      = null;
 let currentResults   = [...ITEMS];
 let activeTypeFilter = '';
 
-/* ===== RENDER CARD ===== */
+/* =====================================================
+   THEME TOGGLE
+   ===================================================== */
+const THEME_KEY = 'lz_ae_theme';
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem(THEME_KEY, theme);
+}
+
+function toggleTheme() {
+  const current = document.documentElement.getAttribute('data-theme') || 'light';
+  applyTheme(current === 'dark' ? 'light' : 'dark');
+}
+
+function buildThemeToggle() {
+  const btn = document.createElement('button');
+  btn.className    = 'theme-toggle';
+  btn.id           = 'theme-btn';
+  btn.setAttribute('aria-label', 'Alternar tema');
+  btn.setAttribute('title', 'Alternar modo claro / escuro');
+  btn.innerHTML = `
+    <span class="t-knob">
+      <span class="t-icon-sun">☀️</span>
+      <span class="t-icon-moon">🌙</span>
+    </span>`;
+  btn.addEventListener('click', toggleTheme);
+  return btn;
+}
+
+/* =====================================================
+   RENDER CARD
+   ===================================================== */
 function renderCard(item, container) {
   const isFav  = favorites.includes(item.id);
   const isLost = item.type === 'Perdido';
   const card   = document.createElement('div');
   card.className = 'item-card';
   card.innerHTML = `
-    <div class="item-thumb" style="background:linear-gradient(135deg,${item.color}15,${item.color}28)">
+    <div class="item-thumb" style="background:linear-gradient(135deg,${item.color}18,${item.color}30)">
       <div class="item-thumb-bg" style="background:${item.color};opacity:.06"></div>
       <span style="position:relative;z-index:1;font-size:2.8rem">${item.emoji}</span>
       <div class="item-type-badge ${isLost ? 'badge-lost' : 'badge-found'}">${isLost ? '😢 Perdido' : '😊 Encontrado'}</div>
@@ -62,7 +94,9 @@ function renderFeatured() {
   ITEMS.slice(0, 6).forEach(i => renderCard(i, grid));
 }
 
-/* ===== SEARCH ===== */
+/* =====================================================
+   SEARCH & FILTER
+   ===================================================== */
 function performSearch() {
   const q   = document.getElementById('search-input').value.toLowerCase().trim();
   const cat = document.getElementById('search-cat').value;
@@ -93,18 +127,18 @@ function renderResults(query = '', cat = '', type = '') {
   results.forEach(i => renderCard(i, grid));
 
   document.getElementById('results-count').textContent    = `${results.length} resultado${results.length !== 1 ? 's' : ''}`;
-  document.getElementById('results-title').textContent    = query ? `"${query}"` : type ? (type === 'Perdido' ? '😢 Objetos Perdidos' : '😊 Objetos Encontrados') : cat || 'Todos os registros';
+  document.getElementById('results-title').textContent    = query ? `"${query}"` : type === 'Perdido' ? '😢 Objetos Perdidos' : type === 'Encontrado' ? '😊 Objetos Encontrados' : cat || 'Todos os registros';
   document.getElementById('results-subtitle').textContent = `${results.length} registro${results.length !== 1 ? 's' : ''} encontrado${results.length !== 1 ? 's' : ''}`;
 
-  // Rebuild category filter chips
+  // Rebuild category chips
   const cats = [...new Set(ITEMS.map(i => i.cat))];
   const fc   = document.getElementById('filter-cats');
   fc.innerHTML = '<div class="chip active" onclick="filterCat(\'\',this)">Todas</div>';
   cats.forEach(c => {
-    const d   = document.createElement('div');
-    d.className = 'chip';
+    const d = document.createElement('div');
+    d.className   = 'chip';
     d.textContent = c;
-    d.onclick = () => filterCat(c, d);
+    d.onclick     = () => filterCat(c, d);
     fc.appendChild(d);
   });
 }
@@ -131,40 +165,28 @@ function sortResults(by) {
   sorted.forEach(i => renderCard(i, grid));
 }
 
-function toggleChip(el) {
-  el.classList.toggle('active');
-}
+function toggleChip(el) { el.classList.toggle('active'); }
 
-/* ===== ACTIONS ===== */
+/* =====================================================
+   ACTIONS
+   ===================================================== */
 function contactItem(id) {
-  if (!currentUser) {
-    showToast('⚠️ Entre na sua conta para contatar');
-    openModal('login');
-    return;
-  }
+  if (!currentUser) { showToast('⚠️ Entre na sua conta para contatar'); openModal('login'); return; }
   showToast('📩 Mensagem enviada ao responsável!');
 }
 
 function submitItem(type) {
-  if (!currentUser) {
-    showToast('⚠️ Faça login para publicar');
-    switchModal('login');
-    return;
-  }
+  if (!currentUser) { showToast('⚠️ Faça login para publicar'); switchModal('login'); return; }
 
   const p        = type === 'Perdido' ? 'ni' : 'nf';
   const name     = document.getElementById(`${p}-name`).value.trim();
   const location = document.getElementById(`${p}-location`).value.trim();
+  if (!name || !location) { showToast('⚠️ Preencha nome e local'); return; }
 
-  if (!name || !location) {
-    showToast('⚠️ Preencha nome e local');
-    return;
-  }
-
-  const cat    = document.getElementById(`${p}-cat`).value;
-  const emojis = { Documentos:'🪪', Eletrônicos:'📱', Chaves:'🔑', Carteiras:'👛', Roupas:'👕', Animais:'🐾', Bolsas:'👜', Outros:'📦' };
-  const today  = new Date();
-  const dateStr= `${String(today.getDate()).padStart(2,'0')}/${String(today.getMonth()+1).padStart(2,'0')}/${today.getFullYear()}`;
+  const cat     = document.getElementById(`${p}-cat`).value;
+  const emojis  = { Documentos:'🪪', Eletrônicos:'📱', Chaves:'🔑', Carteiras:'👛', Roupas:'👕', Animais:'🐾', Bolsas:'👜', Outros:'📦' };
+  const today   = new Date();
+  const dateStr = `${String(today.getDate()).padStart(2,'0')}/${String(today.getMonth()+1).padStart(2,'0')}/${today.getFullYear()}`;
 
   ITEMS.unshift({
     id: Date.now(), type, name, cat,
@@ -179,23 +201,18 @@ function submitItem(type) {
   renderFeatured();
 }
 
-/* ===== FAVORITES ===== */
+/* =====================================================
+   FAVORITES
+   ===================================================== */
 function toggleFav(id, btn) {
-  if (!currentUser) {
-    showToast('⚠️ Entre na sua conta para salvar');
-    openModal('login');
-    return;
-  }
-
+  if (!currentUser) { showToast('⚠️ Entre na sua conta para salvar'); openModal('login'); return; }
   if (favorites.includes(id)) {
     favorites = favorites.filter(f => f !== id);
-    btn.innerHTML = '🤍';
-    btn.classList.remove('active');
+    btn.innerHTML = '🤍'; btn.classList.remove('active');
     showToast('Removido dos favoritos');
   } else {
     favorites.push(id);
-    btn.innerHTML = '💜';
-    btn.classList.add('active');
+    btn.innerHTML = '💜'; btn.classList.add('active');
     showToast('💜 Salvo nos favoritos!');
   }
   localStorage.setItem('lz_ae_favs', JSON.stringify(favorites));
@@ -205,7 +222,6 @@ function renderFavoritesPage() {
   const grid     = document.getElementById('favorites-grid');
   grid.innerHTML = '';
   const favItems = ITEMS.filter(i => favorites.includes(i.id));
-
   if (!favItems.length) {
     grid.innerHTML = `
       <div class="empty-state">
@@ -219,12 +235,13 @@ function renderFavoritesPage() {
   }
 }
 
-/* ===== PAGE ROUTER ===== */
+/* =====================================================
+   PAGE ROUTER
+   ===================================================== */
 function showPage(page) {
   ['home-page', 'results-page', 'favorites-page'].forEach(id => {
     document.getElementById(id).style.display = 'none';
   });
-
   const footer = document.getElementById('main-footer');
 
   if (page === 'home') {
@@ -242,14 +259,15 @@ function showPage(page) {
   }
 }
 
-/* ===== AUTH ===== */
+/* =====================================================
+   AUTH
+   ===================================================== */
 function doLogin() {
   const email = document.getElementById('login-email').value;
   const pass  = document.getElementById('login-pass').value;
   if (!email || !pass) { showToast('⚠️ Preencha todos os campos'); return; }
   loginUser({ name: email.split('@')[0], email });
-  closeModal();
-  showToast('✅ Bem-vindo de volta!');
+  closeModal(); showToast('✅ Bem-vindo de volta!');
 }
 
 function doSignup() {
@@ -259,21 +277,20 @@ function doSignup() {
   if (!name || !email || !pass) { showToast('⚠️ Preencha todos os campos'); return; }
   if (pass.length < 6) { showToast('⚠️ Senha muito curta'); return; }
   loginUser({ name, email });
-  closeModal();
-  showToast('🎉 Conta criada!');
+  closeModal(); showToast('🎉 Conta criada com sucesso!');
 }
 
 function doGoogleLogin() {
   loginUser({ name: 'Usuário Google', email: 'usuario@gmail.com' });
-  closeModal();
-  showToast('✅ Login realizado!');
+  closeModal(); showToast('✅ Login realizado!');
 }
 
 function loginUser(user) {
-  currentUser = user;
+  currentUser    = user;
   const initials = user.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+  const actions  = document.getElementById('nav-actions');
 
-  document.getElementById('nav-actions').innerHTML = `
+  actions.innerHTML = `
     <button class="btn btn-success" onclick="openModal('newitem-found')" style="padding:9px 18px;font-size:.85rem">+ Registrar</button>
     <div class="user-menu-wrap">
       <button class="user-avatar" onclick="toggleDropdown()">${initials}</button>
@@ -287,6 +304,9 @@ function loginUser(user) {
       </div>
     </div>`;
 
+  // Re-inject theme toggle after rebuilding nav-actions
+  actions.insertBefore(buildThemeToggle(), actions.firstChild);
+
   document.getElementById('fav-nav-link').style.display = 'inline';
   document.getElementById('mob-fav-link').style.display = 'inline';
 }
@@ -297,15 +317,21 @@ function toggleDropdown() {
 
 function doLogout() {
   currentUser = null;
-  document.getElementById('nav-actions').innerHTML = `
+  const actions = document.getElementById('nav-actions');
+  actions.innerHTML = `
     <button class="btn btn-ghost" onclick="openModal('login')">Entrar</button>
     <button class="btn btn-primary" onclick="openModal('signup')">Criar conta</button>`;
+  // Re-inject theme toggle
+  actions.insertBefore(buildThemeToggle(), actions.firstChild);
+
   document.getElementById('fav-nav-link').style.display = 'none';
   document.getElementById('mob-fav-link').style.display = 'none';
   showToast('👋 Até logo!');
 }
 
-/* ===== MODAL ===== */
+/* =====================================================
+   MODAL
+   ===================================================== */
 function openModal(type) {
   document.getElementById('modal-overlay').classList.add('open');
   ['login', 'signup', 'newitem-lost', 'newitem-found'].forEach(id => {
@@ -314,19 +340,13 @@ function openModal(type) {
   });
 }
 
-function closeModal() {
-  document.getElementById('modal-overlay').classList.remove('open');
-}
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); }
+function closeModalOutside(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
+function switchModal(type) { openModal(type); }
 
-function closeModalOutside(e) {
-  if (e.target === document.getElementById('modal-overlay')) closeModal();
-}
-
-function switchModal(type) {
-  openModal(type);
-}
-
-/* ===== TOAST ===== */
+/* =====================================================
+   TOAST
+   ===================================================== */
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -334,44 +354,62 @@ function showToast(msg) {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
-/* ===== MISC ===== */
+/* =====================================================
+   MISC
+   ===================================================== */
 function toggleMobileNav() {
   document.getElementById('mobile-nav').classList.toggle('open');
 }
 
-/* ===== EVENT LISTENERS ===== */
+/* =====================================================
+   EVENT LISTENERS & INIT
+   ===================================================== */
 window.addEventListener('scroll', () => {
   document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
 });
 
-document.addEventListener('click', (e) => {
+document.addEventListener('click', e => {
   if (!e.target.closest('.user-menu-wrap')) {
     document.getElementById('user-dropdown')?.classList.remove('open');
   }
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Render initial featured items
+
+  /* --- Apply saved or system theme --- */
+  const saved       = localStorage.getItem(THEME_KEY);
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  applyTheme(saved || (prefersDark ? 'dark' : 'light'));
+
+  /* --- Inject theme toggle into navbar --- */
+  const navActions = document.getElementById('nav-actions');
+  navActions.insertBefore(buildThemeToggle(), navActions.firstChild);
+
+  /* --- Mobile nav theme toggle row --- */
+  const mobileThemeRow = document.getElementById('mobile-theme-row');
+  if (mobileThemeRow) {
+    mobileThemeRow.appendChild(buildThemeToggle());
+  }
+
+  /* --- Initial renders --- */
   renderFeatured();
 
-  // Enter key triggers search
+  /* --- Search on Enter --- */
   document.getElementById('search-input').addEventListener('keydown', e => {
     if (e.key === 'Enter') performSearch();
   });
 
-  // Set today's date on new item forms
+  /* --- Set today's date on forms --- */
   const today = new Date().toISOString().split('T')[0];
   ['ni-date', 'nf-date'].forEach(id => {
     const el = document.getElementById(id);
     if (el) el.value = today;
   });
 
-  // Scroll reveal animation
+  /* --- Scroll reveal --- */
   const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (e.isIntersecting) e.target.classList.add('visible');
-    });
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
   }, { threshold: 0.12 });
-
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
 });

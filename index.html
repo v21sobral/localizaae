@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" data-theme="light">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,17 +15,19 @@
 </head>
 <body>
 
-<!-- ===========================
+<!-- ========================================
      NAVBAR
-=========================== -->
+     Theme toggle is injected by script.js
+======================================== -->
 <nav class="navbar" id="navbar">
+
   <div class="nav-logo" onclick="showPage('home')">
     <img
       src="localizae-removebg-preview.png"
       alt="Localiza Aê"
       onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
     />
-    <!-- Fallback logo (shown if image fails to load) -->
+    <!-- Fallback text logo -->
     <div style="display:none;align-items:center;gap:8px">
       <span style="font-size:1.5rem">📍</span>
       <div>
@@ -43,6 +45,7 @@
     <a href="#" onclick="document.getElementById('how-section').scrollIntoView({behavior:'smooth'})">Como Funciona</a>
   </div>
 
+  <!-- theme toggle + auth buttons injected here by script.js -->
   <div class="nav-actions" id="nav-actions">
     <button class="btn btn-ghost" onclick="openModal('login')">Entrar</button>
     <button class="btn btn-primary" onclick="openModal('signup')">Criar conta</button>
@@ -55,6 +58,11 @@
 
 <!-- Mobile Navigation -->
 <div class="mobile-nav" id="mobile-nav">
+  <!-- Theme toggle row -->
+  <div class="mobile-theme-row" id="mobile-theme-row">
+    <span>Modo escuro</span>
+    <!-- theme toggle button injected by script.js -->
+  </div>
   <a href="#" onclick="showPage('home');toggleMobileNav()">Início</a>
   <a href="#" onclick="searchBy('','Perdido');toggleMobileNav()">😢 Perdidos</a>
   <a href="#" onclick="searchBy('','Encontrado');toggleMobileNav()">😊 Encontrados</a>
@@ -67,9 +75,9 @@
 </div>
 
 
-<!-- ===========================
+<!-- ========================================
      HOME PAGE
-=========================== -->
+======================================== -->
 <div id="home-page">
 
   <!-- HERO -->
@@ -215,9 +223,9 @@
 </div><!-- /home-page -->
 
 
-<!-- ===========================
+<!-- ========================================
      RESULTS PAGE
-=========================== -->
+======================================== -->
 <div id="results-page">
   <div class="results-header">
     <h2 id="results-title">Resultados</h2>
@@ -226,7 +234,6 @@
   <div class="results-layout">
     <aside class="filters-sidebar">
       <h3>Filtros</h3>
-
       <div class="filter-group">
         <label>Tipo</label>
         <div class="filter-chips">
@@ -235,12 +242,10 @@
           <div class="chip" onclick="setFilterType('Encontrado',this)">😊 Encontrados</div>
         </div>
       </div>
-
       <div class="filter-group">
         <label>Categoria</label>
         <div class="filter-chips" id="filter-cats"></div>
       </div>
-
       <div class="filter-group">
         <label>Status</label>
         <div class="filter-chips">
@@ -250,7 +255,6 @@
         </div>
       </div>
     </aside>
-
     <div class="results-content">
       <div class="results-toolbar">
         <span id="results-count">0 resultados</span>
@@ -265,9 +269,9 @@
 </div><!-- /results-page -->
 
 
-<!-- ===========================
+<!-- ========================================
      FAVORITES PAGE
-=========================== -->
+======================================== -->
 <div id="favorites-page">
   <div class="fav-header">
     <h2>💜 Meus Favoritos</h2>
@@ -277,9 +281,9 @@
 </div><!-- /favorites-page -->
 
 
-<!-- ===========================
+<!-- ========================================
      FOOTER
-=========================== -->
+======================================== -->
 <footer id="main-footer">
   <div class="footer-grid">
     <div class="footer-brand">
@@ -325,9 +329,9 @@
 </footer>
 
 
-<!-- ===========================
+<!-- ========================================
      MODALS
-=========================== -->
+======================================== -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
   <div class="modal">
     <button class="modal-close" onclick="closeModal()">✕</button>
@@ -468,7 +472,6 @@
 
   </div>
 </div><!-- /modal-overlay -->
-
 
 <!-- Toast Notification -->
 <div class="toast" id="toast"></div>
