@@ -137,7 +137,7 @@ img { display: block; max-width: 100%; }
 .navbar.scrolled { box-shadow: var(--shadow); }
 .nav-logo { display: flex; align-items: center; gap: 10px; cursor: pointer; }
 .nav-logo img { 
-  height: 220px; 
+  height: 96px; 
   width: auto; 
   object-fit: contain; 
 }
@@ -222,16 +222,18 @@ img { display: block; max-width: 100%; }
   content: ''; position: absolute; inset: -3px; border-radius: 50%;
   background: var(--success); opacity: .3; animation: ripple 2s infinite;
 }
+.hero-logo-title { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0; animation: fadeUp .7s .1s ease both; }
+.hero-logo { height: 640px; width: auto; object-fit: contain; }
 .hero h1 { font-size: clamp(2.8rem, 6vw, 4.4rem); font-weight: 800; line-height: 1.1; animation: fadeUp .7s .1s ease both; }
 .grad { background: var(--gradient2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.hero .slogan { margin-top: 12px; font-size: 1.05rem; font-weight: 600; letter-spacing: .05em; color: var(--purple); opacity: .75; animation: fadeUp .7s .15s ease both; }
+.hero .slogan { margin-top: 12px; font-size: 1.05rem; font-weight: 400; letter-spacing: .05em; color: var(--purple); opacity: .75; animation: fadeUp .7s .15s ease both; }
 .hero p.sub { margin-top: 18px; font-size: 1.1rem; color: var(--muted); line-height: 1.75; max-width: 580px; margin-inline: auto; animation: fadeUp .7s .2s ease both; }
 .hero-cta { margin-top: 36px; display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; animation: fadeUp .7s .3s ease both; }
 .hero-cta .btn { padding: 14px 30px; font-size: 1rem; }
 
 /* ===== SEARCH BOX ===== */
 .search-box {
-  margin-top: 44px; display: flex; align-items: stretch;
+  margin-top: 0; display: flex; align-items: stretch;
   background: var(--bg-card); border-radius: 50px;
   box-shadow: var(--shadow-xl); overflow: hidden;
   max-width: 680px; margin-inline: auto;
