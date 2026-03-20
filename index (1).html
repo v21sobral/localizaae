@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Localiza Aê — Achou, Registrou, Localizou!</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet" />
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- ===========================
+     NAVBAR
+=========================== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-logo" onclick="showPage('home')">
+    <img
+      src="localizae-removebg-preview.png"
+      alt="Localiza Aê"
+      onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
+    />
+    <!-- Fallback logo (shown if image fails to load) -->
+    <div style="display:none;align-items:center;gap:8px">
+      <span style="font-size:1.5rem">📍</span>
+      <div>
+        <div style="font-family:Syne,sans-serif;font-weight:800;font-size:1.2rem;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent">Localiza Aê</div>
+        <div style="font-size:.65rem;color:var(--muted);font-weight:500">Achou, Registrou, Localizou!</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="nav-links">
+    <a href="#" onclick="showPage('home')">Início</a>
+    <a href="#" onclick="searchBy('','Perdido')">😢 Perdidos</a>
+    <a href="#" onclick="searchBy('','Encontrado')">😊 Encontrados</a>
+    <a href="#" id="fav-nav-link" style="display:none" onclick="showPage('favorites')">💜 Favoritos</a>
+    <a href="#" onclick="document.getElementById('how-section').scrollIntoView({behavior:'smooth'})">Como Funciona</a>
+  </div>
+
+  <div class="nav-actions" id="nav-actions">
+    <button class="btn btn-ghost" onclick="openModal('login')">Entrar</button>
+    <button class="btn btn-primary" onclick="openModal('signup')">Criar conta</button>
+  </div>
+
+  <div class="hamburger" onclick="toggleMobileNav()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- Mobile Navigation -->
+<div class="mobile-nav" id="mobile-nav">
+  <a href="#" onclick="showPage('home');toggleMobileNav()">Início</a>
+  <a href="#" onclick="searchBy('','Perdido');toggleMobileNav()">😢 Perdidos</a>
+  <a href="#" onclick="searchBy('','Encontrado');toggleMobileNav()">😊 Encontrados</a>
+  <a href="#" id="mob-fav-link" style="display:none" onclick="showPage('favorites');toggleMobileNav()">💜 Favoritos</a>
+  <a href="#" onclick="toggleMobileNav()">Como Funciona</a>
+  <div style="display:flex;gap:10px;padding-top:8px">
+    <button class="btn btn-ghost" style="flex:1" onclick="openModal('login');toggleMobileNav()">Entrar</button>
+    <button class="btn btn-primary" style="flex:1" onclick="openModal('signup');toggleMobileNav()">Cadastrar</button>
+  </div>
+</div>
+
+
+<!-- ===========================
+     HOME PAGE
+=========================== -->
+<div id="home-page">
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-blob b1"></div>
+    <div class="hero-blob b2"></div>
+    <div class="hero-blob b3"></div>
+
+    <div class="hero-content">
+      <div class="hero-badge">
+        <span class="live-dot"></span>
+        247 objetos encontrados esta semana
+      </div>
+
+      <h1>Perdeu algo? <span class="grad">A gente te ajuda</span> a encontrar!</h1>
+      <div class="slogan">✦ Achou, Registrou, Localizou! ✦</div>
+
+      <p class="sub">
+        Registre objetos perdidos e encontrados. Conectamos pessoas e
+        devolvemos o que é seu — de forma simples e gratuita.
+      </p>
+
+      <div class="hero-cta">
+        <button class="btn" style="background:linear-gradient(135deg,#EF4444,#DC2626);color:white;box-shadow:0 4px 16px rgba(239,68,68,.35)" onclick="openModal('newitem-lost')">
+          😢 Perdi algo
+        </button>
+        <button class="btn btn-success" onclick="openModal('newitem-found')">
+          😊 Achei algo
+        </button>
+      </div>
+
+      <div class="search-box">
+        <input type="text" id="search-input" placeholder="Busque por chave, carteira, celular..." />
+        <select id="search-cat">
+          <option value="">Todas categorias</option>
+          <option>Documentos</option>
+          <option>Eletrônicos</option>
+          <option>Chaves</option>
+          <option>Carteiras</option>
+          <option>Roupas</option>
+          <option>Animais</option>
+          <option>Bolsas</option>
+          <option>Outros</option>
+        </select>
+        <button onclick="performSearch()">🔍 Buscar</button>
+      </div>
+
+      <div class="hero-stats">
+        <div class="stat"><strong>8.4k+</strong><span>Registros</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><strong>6.1k</strong><span>Devolvidos</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><strong>72%</strong><span>Retorno</span></div>
+        <div class="stat-divider"></div>
+        <div class="stat"><strong>34k</strong><span>Usuários</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section class="section section-alt" id="categories-section">
+    <div class="section-header reveal">
+      <h2>Buscar por <span class="grad">categoria</span></h2>
+      <a href="#" onclick="performSearch()">Ver todos →</a>
+    </div>
+    <div class="categories-grid reveal">
+      <div class="cat-card" onclick="searchBy('Documentos','')"><div class="cat-icon">🪪</div><h4>Documentos</h4><span>1.240 registros</span></div>
+      <div class="cat-card" onclick="searchBy('Eletrônicos','')"><div class="cat-icon">📱</div><h4>Eletrônicos</h4><span>980 registros</span></div>
+      <div class="cat-card" onclick="searchBy('Chaves','')"><div class="cat-icon">🔑</div><h4>Chaves</h4><span>760 registros</span></div>
+      <div class="cat-card" onclick="searchBy('Carteiras','')"><div class="cat-icon">👛</div><h4>Carteiras</h4><span>540 registros</span></div>
+      <div class="cat-card" onclick="searchBy('Roupas','')"><div class="cat-icon">👕</div><h4>Roupas</h4><span>320 registros</span></div>
+      <div class="cat-card" onclick="searchBy('Animais','')"><div class="cat-icon">🐾</div><h4>Animais</h4><span>180 registros</span></div>
+      <div class="cat-card" onclick="searchBy('Bolsas','')"><div class="cat-icon">👜</div><h4>Bolsas</h4><span>430 registros</span></div>
+      <div class="cat-card" onclick="searchBy('Outros','')"><div class="cat-icon">📦</div><h4>Outros</h4><span>2.100 registros</span></div>
+    </div>
+  </section>
+
+  <!-- RECENT ITEMS -->
+  <section class="section" id="featured-section">
+    <div class="section-header reveal">
+      <h2>Registros <span class="grad">recentes</span></h2>
+      <a href="#" onclick="performSearch()">Ver todos →</a>
+    </div>
+    <div class="items-grid" id="featured-grid"></div>
+  </section>
+
+  <!-- HOW IT WORKS -->
+  <section class="how-section" id="how-section">
+    <div class="how-bg"></div>
+    <div class="section-header reveal" style="position:relative;z-index:1">
+      <h2 style="color:white">Como <span class="grad">funciona</span></h2>
+    </div>
+    <div class="steps-grid" style="position:relative;z-index:1">
+      <div class="steps-connector"></div>
+      <div class="step-card reveal">
+        <div class="step-num">01</div>
+        <div class="step-icon-wrap" style="background:rgba(76,110,245,.15)">📝</div>
+        <h3>Registre</h3>
+        <p>Cadastre o objeto perdido ou encontrado com descrição e local.</p>
+      </div>
+      <div class="step-card reveal">
+        <div class="step-num">02</div>
+        <div class="step-icon-wrap" style="background:rgba(147,51,234,.15)">🔍</div>
+        <h3>Busque</h3>
+        <p>Filtre por categoria, local e data para encontrar o que procura.</p>
+      </div>
+      <div class="step-card reveal">
+        <div class="step-num">03</div>
+        <div class="step-icon-wrap" style="background:rgba(76,110,245,.15)">💬</div>
+        <h3>Conecte</h3>
+        <p>Entre em contato com quem registrou e combine a devolução.</p>
+      </div>
+      <div class="step-card reveal">
+        <div class="step-num">04</div>
+        <div class="step-icon-wrap" style="background:rgba(16,185,129,.15)">🎉</div>
+        <h3>Recupere</h3>
+        <p>Retire seu objeto e marque como resolvido — missão cumprida!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- MAP BANNER -->
+  <div class="map-banner">
+    <div>
+      <h2>Encontre objetos perto de você no mapa</h2>
+      <p>Visualize registros próximos à sua localização e aumente as chances de recuperar seu bem.</p>
+      <button class="btn" onclick="showToast('🗺️ Mapa em breve!')">📍 Abrir mapa interativo</button>
+    </div>
+    <div class="map-visual">🗺️</div>
+  </div>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <h2 class="reveal">Já perdeu algo e ainda não <span class="grad">registrou?</span></h2>
+    <p class="reveal">Quanto antes você registrar, maiores as chances de recuperar. É grátis e leva menos de 2 minutos.</p>
+    <div class="cta-actions reveal">
+      <button class="btn btn-primary" onclick="openModal('newitem-lost')" style="padding:14px 34px;font-size:1rem">😢 Registrar perda</button>
+      <button class="btn btn-ghost" onclick="openModal('signup')" style="padding:14px 34px;font-size:1rem">Criar conta grátis</button>
+    </div>
+  </section>
+
+</div><!-- /home-page -->
+
+
+<!-- ===========================
+     RESULTS PAGE
+=========================== -->
+<div id="results-page">
+  <div class="results-header">
+    <h2 id="results-title">Resultados</h2>
+    <p id="results-subtitle">Objetos registrados na plataforma</p>
+  </div>
+  <div class="results-layout">
+    <aside class="filters-sidebar">
+      <h3>Filtros</h3>
+
+      <div class="filter-group">
+        <label>Tipo</label>
+        <div class="filter-chips">
+          <div class="chip active" onclick="setFilterType('',this)">Todos</div>
+          <div class="chip" onclick="setFilterType('Perdido',this)">😢 Perdidos</div>
+          <div class="chip" onclick="setFilterType('Encontrado',this)">😊 Encontrados</div>
+        </div>
+      </div>
+
+      <div class="filter-group">
+        <label>Categoria</label>
+        <div class="filter-chips" id="filter-cats"></div>
+      </div>
+
+      <div class="filter-group">
+        <label>Status</label>
+        <div class="filter-chips">
+          <div class="chip active" onclick="toggleChip(this)">Todos</div>
+          <div class="chip" onclick="toggleChip(this)">Abertos</div>
+          <div class="chip" onclick="toggleChip(this)">Resolvidos</div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="results-content">
+      <div class="results-toolbar">
+        <span id="results-count">0 resultados</span>
+        <select class="sort-select" onchange="sortResults(this.value)">
+          <option value="recent">Mais recentes</option>
+          <option value="az">A → Z</option>
+        </select>
+      </div>
+      <div class="items-grid" id="results-grid"></div>
+    </div>
+  </div>
+</div><!-- /results-page -->
+
+
+<!-- ===========================
+     FAVORITES PAGE
+=========================== -->
+<div id="favorites-page">
+  <div class="fav-header">
+    <h2>💜 Meus Favoritos</h2>
+    <p>Registros que você está acompanhando</p>
+  </div>
+  <div id="favorites-grid"></div>
+</div><!-- /favorites-page -->
+
+
+<!-- ===========================
+     FOOTER
+=========================== -->
+<footer id="main-footer">
+  <div class="footer-grid">
+    <div class="footer-brand">
+      <img
+        src="localizae-removebg-preview.png"
+        alt="Localiza Aê"
+        style="height:46px;filter:brightness(0) invert(1);opacity:.85"
+        onerror="this.outerHTML='<div style=\'font-family:Syne,sans-serif;font-weight:800;font-size:1.4rem;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent\'>📍 Localiza Aê</div>'"
+      />
+      <p>A plataforma que conecta pessoas e devolve o que é seu. Achou, Registrou, Localizou!</p>
+    </div>
+    <div>
+      <h5>Plataforma</h5>
+      <ul>
+        <li><a href="#">Como funciona</a></li>
+        <li><a href="#">Objetos perdidos</a></li>
+        <li><a href="#">Objetos encontrados</a></li>
+        <li><a href="#">Mapa de registros</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Empresa</h5>
+      <ul>
+        <li><a href="#">Sobre nós</a></li>
+        <li><a href="#">Blog</a></li>
+        <li><a href="#">Parcerias</a></li>
+        <li><a href="#">Contato</a></li>
+      </ul>
+    </div>
+    <div>
+      <h5>Legal</h5>
+      <ul>
+        <li><a href="#">Termos de uso</a></li>
+        <li><a href="#">Privacidade</a></li>
+        <li><a href="#">Cookies</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span>© 2025 Localiza Aê. Todos os direitos reservados.</span>
+    <span>Achou, Registrou, Localizou! 📍</span>
+  </div>
+</footer>
+
+
+<!-- ===========================
+     MODALS
+=========================== -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+
+    <!-- LOGIN -->
+    <div id="modal-login">
+      <h2>Bem-vindo de <span class="grad">volta!</span> 👋</h2>
+      <p class="sub">Entre na sua conta para continuar</p>
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" id="login-email" placeholder="seu@email.com" />
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="login-pass" placeholder="••••••••" />
+      </div>
+      <button class="btn btn-primary" onclick="doLogin()">Entrar na conta</button>
+      <div class="modal-divider">ou</div>
+      <button class="btn-google" onclick="doGoogleLogin()">
+        <svg width="18" height="18" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        Continuar com Google
+      </button>
+      <p class="modal-switch">Não tem conta? <a onclick="switchModal('signup')">Criar agora</a></p>
+    </div>
+
+    <!-- SIGNUP -->
+    <div id="modal-signup" style="display:none">
+      <h2>Criar <span class="grad">conta</span> 🚀</h2>
+      <p class="sub">Junte-se a quem já está ajudando a devolver!</p>
+      <div class="form-group">
+        <label>Nome completo</label>
+        <input type="text" id="signup-name" placeholder="Seu nome" />
+      </div>
+      <div class="form-group">
+        <label>E-mail</label>
+        <input type="email" id="signup-email" placeholder="seu@email.com" />
+      </div>
+      <div class="form-group">
+        <label>Senha</label>
+        <input type="password" id="signup-pass" placeholder="Mínimo 6 caracteres" />
+      </div>
+      <button class="btn btn-primary" onclick="doSignup()">Criar minha conta</button>
+      <div class="modal-divider">ou</div>
+      <button class="btn-google" onclick="doGoogleLogin()">
+        <svg width="18" height="18" viewBox="0 0 24 24">
+          <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+          <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+          <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/>
+          <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+        </svg>
+        Continuar com Google
+      </button>
+      <p class="modal-switch">Já tem conta? <a onclick="switchModal('login')">Entrar</a></p>
+    </div>
+
+    <!-- NEW ITEM — LOST -->
+    <div id="modal-newitem-lost" style="display:none">
+      <h2 style="color:var(--danger)">😢 Perdi um objeto</h2>
+      <p class="sub">Quanto mais detalhes, mais rápido alguém te ajuda!</p>
+      <div class="form-group">
+        <label>Nome do objeto *</label>
+        <input type="text" id="ni-name" placeholder="Ex: Carteira preta de couro" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Categoria</label>
+          <select id="ni-cat">
+            <option>Documentos</option><option>Eletrônicos</option>
+            <option>Chaves</option><option>Carteiras</option>
+            <option>Roupas</option><option>Animais</option>
+            <option>Bolsas</option><option>Outros</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Data</label>
+          <input type="date" id="ni-date" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Local onde perdeu *</label>
+        <input type="text" id="ni-location" placeholder="Ex: Shopping Barra, Salvador - BA" />
+      </div>
+      <div class="form-group">
+        <label>Descrição</label>
+        <textarea id="ni-desc" placeholder="Cor, marca, sinais específicos que ajudem a identificar..."></textarea>
+      </div>
+      <button
+        class="btn btn-primary"
+        style="background:linear-gradient(135deg,#EF4444,#DC2626);box-shadow:0 4px 16px rgba(239,68,68,.3)"
+        onclick="submitItem('Perdido')"
+      >
+        😢 Publicar registro
+      </button>
+      <p class="modal-switch">Achou algo? <a onclick="switchModal('newitem-found')">Registrar objeto encontrado</a></p>
+    </div>
+
+    <!-- NEW ITEM — FOUND -->
+    <div id="modal-newitem-found" style="display:none">
+      <h2 style="color:var(--success)">😊 Achei um objeto</h2>
+      <p class="sub">Você pode ser o herói de alguém hoje!</p>
+      <div class="form-group">
+        <label>Nome do objeto *</label>
+        <input type="text" id="nf-name" placeholder="Ex: iPhone 15 preto" />
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Categoria</label>
+          <select id="nf-cat">
+            <option>Documentos</option><option>Eletrônicos</option>
+            <option>Chaves</option><option>Carteiras</option>
+            <option>Roupas</option><option>Animais</option>
+            <option>Bolsas</option><option>Outros</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Data</label>
+          <input type="date" id="nf-date" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Local onde encontrou *</label>
+        <input type="text" id="nf-location" placeholder="Ex: Praça da Sé, São Paulo - SP" />
+      </div>
+      <div class="form-group">
+        <label>Descrição</label>
+        <textarea id="nf-desc" placeholder="Descreva o objeto para que o dono possa reconhecer..."></textarea>
+      </div>
+      <button class="btn btn-success" style="width:100%;justify-content:center;padding:14px" onclick="submitItem('Encontrado')">
+        😊 Publicar registro
+      </button>
+      <p class="modal-switch">Perdeu algo? <a onclick="switchModal('newitem-lost')">Registrar objeto perdido</a></p>
+    </div>
+
+  </div>
+</div><!-- /modal-overlay -->
+
+
+<!-- Toast Notification -->
+<div class="toast" id="toast"></div>
+
+<!-- JavaScript -->
+<script src="script.js"></script>
+</body>
+</html>
