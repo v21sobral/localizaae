@@ -23,7 +23,7 @@
 
   <div class="nav-logo" onclick="showPage('home')">
     <img
-      src="localizae-removebg-preview.png"
+      src="logo.svg"
       alt="Localiza Aê"
       onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"
     />
@@ -39,9 +39,9 @@
 
   <div class="nav-links">
     <a href="#" onclick="showPage('home')">Início</a>
-    <a href="#" onclick="searchBy('','Perdido')">😢 Perdidos</a>
-    <a href="#" onclick="searchBy('','Encontrado')">😊 Encontrados</a>
-    <a href="#" id="fav-nav-link" style="display:none" onclick="showPage('favorites')">💜 Favoritos</a>
+    <a href="#" onclick="searchBy('','Perdido')">Perdidos</a>
+    <a href="#" onclick="searchBy('','Encontrado')">Encontrados</a>
+    <a href="#" id="fav-nav-link" style="display:none" onclick="showPage('favorites')">Favoritos</a>
     <a href="#" onclick="document.getElementById('how-section').scrollIntoView({behavior:'smooth'})">Como Funciona</a>
   </div>
 
@@ -64,9 +64,9 @@
     <!-- theme toggle button injected by script.js -->
   </div>
   <a href="#" onclick="showPage('home');toggleMobileNav()">Início</a>
-  <a href="#" onclick="searchBy('','Perdido');toggleMobileNav()">😢 Perdidos</a>
-  <a href="#" onclick="searchBy('','Encontrado');toggleMobileNav()">😊 Encontrados</a>
-  <a href="#" id="mob-fav-link" style="display:none" onclick="showPage('favorites');toggleMobileNav()">💜 Favoritos</a>
+  <a href="#" onclick="searchBy('','Perdido');toggleMobileNav()">Perdidos</a>
+  <a href="#" onclick="searchBy('','Encontrado');toggleMobileNav()">Encontrados</a>
+  <a href="#" id="mob-fav-link" style="display:none" onclick="showPage('favorites');toggleMobileNav()">Favoritos</a>
   <a href="#" onclick="toggleMobileNav()">Como Funciona</a>
   <div style="display:flex;gap:10px;padding-top:8px">
     <button class="btn btn-ghost" style="flex:1" onclick="openModal('login');toggleMobileNav()">Entrar</button>
@@ -93,22 +93,12 @@
         247 objetos encontrados esta semana
       </div>
 
-      <h1>Perdeu algo? <span class="grad">A gente te ajuda</span> a encontrar!</h1>
-      <div class="slogan">✦ Achou, Registrou, Localizou! ✦</div>
+      <h1>Achou <span class="grad">Registrou</span> Localizou!</h1>
 
       <p class="sub">
-        Registre objetos perdidos e encontrados. Conectamos pessoas e
-        devolvemos o que é seu — de forma simples e gratuita.
+        Devolvemos o que é seu — de forma simples e gratuita.
       </p>
 
-      <div class="hero-cta">
-        <button class="btn" style="background:linear-gradient(135deg,#EF4444,#DC2626);color:white;box-shadow:0 4px 16px rgba(239,68,68,.35)" onclick="openModal('newitem-lost')">
-          😢 Perdi algo
-        </button>
-        <button class="btn btn-success" onclick="openModal('newitem-found')">
-          😊 Achei algo
-        </button>
-      </div>
 
       <div class="search-box">
         <input type="text" id="search-input" placeholder="Busque por chave, carteira, celular..." />
@@ -119,7 +109,6 @@
           <option>Chaves</option>
           <option>Carteiras</option>
           <option>Roupas</option>
-          <option>Animais</option>
           <option>Bolsas</option>
           <option>Outros</option>
         </select>
@@ -150,7 +139,6 @@
       <div class="cat-card" onclick="searchBy('Chaves','')"><div class="cat-icon">🔑</div><h4>Chaves</h4><span>760 registros</span></div>
       <div class="cat-card" onclick="searchBy('Carteiras','')"><div class="cat-icon">👛</div><h4>Carteiras</h4><span>540 registros</span></div>
       <div class="cat-card" onclick="searchBy('Roupas','')"><div class="cat-icon">👕</div><h4>Roupas</h4><span>320 registros</span></div>
-      <div class="cat-card" onclick="searchBy('Animais','')"><div class="cat-icon">🐾</div><h4>Animais</h4><span>180 registros</span></div>
       <div class="cat-card" onclick="searchBy('Bolsas','')"><div class="cat-icon">👜</div><h4>Bolsas</h4><span>430 registros</span></div>
       <div class="cat-card" onclick="searchBy('Outros','')"><div class="cat-icon">📦</div><h4>Outros</h4><span>2.100 registros</span></div>
     </div>
@@ -176,8 +164,8 @@
       <div class="step-card reveal">
         <div class="step-num">01</div>
         <div class="step-icon-wrap" style="background:rgba(76,110,245,.15)">📝</div>
-        <h3>Registre</h3>
-        <p>Cadastre o objeto perdido ou encontrado com descrição e local.</p>
+        <h3>Registro</h3>
+        <p>Cadastramos o objeto perdido ou encontrado com descrição e local.</p>
       </div>
       <div class="step-card reveal">
         <div class="step-num">02</div>
@@ -189,13 +177,13 @@
         <div class="step-num">03</div>
         <div class="step-icon-wrap" style="background:rgba(76,110,245,.15)">💬</div>
         <h3>Conecte</h3>
-        <p>Entre em contato com quem registrou e combine a devolução.</p>
+        <p>Vá até o local da devolução.</p>
       </div>
       <div class="step-card reveal">
         <div class="step-num">04</div>
         <div class="step-icon-wrap" style="background:rgba(16,185,129,.15)">🎉</div>
         <h3>Recupere</h3>
-        <p>Retire seu objeto e marque como resolvido — missão cumprida!</p>
+        <p>Retire seu objeto — missão cumprida!</p>
       </div>
     </div>
   </section>
@@ -209,17 +197,6 @@
     </div>
     <div class="map-visual">🗺️</div>
   </div>
-
-  <!-- CTA -->
-  <section class="cta-section">
-    <h2 class="reveal">Já perdeu algo e ainda não <span class="grad">registrou?</span></h2>
-    <p class="reveal">Quanto antes você registrar, maiores as chances de recuperar. É grátis e leva menos de 2 minutos.</p>
-    <div class="cta-actions reveal">
-      <button class="btn btn-primary" onclick="openModal('newitem-lost')" style="padding:14px 34px;font-size:1rem">😢 Registrar perda</button>
-      <button class="btn btn-ghost" onclick="openModal('signup')" style="padding:14px 34px;font-size:1rem">Criar conta grátis</button>
-    </div>
-  </section>
-
 </div><!-- /home-page -->
 
 
@@ -288,9 +265,9 @@
   <div class="footer-grid">
     <div class="footer-brand">
       <img
-        src="localizae-removebg-preview.png"
+        src="logo.svg"
         alt="Localiza Aê"
-        style="height:46px;filter:brightness(0) invert(1);opacity:.85"
+        style="height:80px;width:auto;object-fit:contain;filter:brightness(0) invert(1);opacity:.85"
         onerror="this.outerHTML='<div style=\'font-family:Syne,sans-serif;font-weight:800;font-size:1.4rem;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent\'>📍 Localiza Aê</div>'"
       />
       <p>A plataforma que conecta pessoas e devolve o que é seu. Achou, Registrou, Localizou!</p>
@@ -323,8 +300,8 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2025 Localiza Aê. Todos os direitos reservados.</span>
-    <span>Achou, Registrou, Localizou! 📍</span>
+    <span>© 2026 ocaliza Aê. Todos os direitos reservados.</span>
+    <span>Achou, Registrou, Localizou! </span>
   </div>
 </footer>
 
