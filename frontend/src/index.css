@@ -1,0 +1,297 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import 'tailwindcss';
+
+@theme inline {
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --color-primary: var(--c-primary);
+  --color-primary-dark: var(--c-primary-dark);
+  --color-primary-light: var(--c-primary-light);
+  --color-on-primary: var(--c-on-primary);
+  --color-primary-disabled: var(--c-primary-disabled);
+  --color-secondary: var(--c-secondary);
+  --color-secondary-strong: var(--c-secondary-strong);
+  --color-accent: var(--c-accent);
+  --color-accent-dark: var(--c-accent-dark);
+  --color-accent-light: var(--c-accent-light);
+  --color-accent-sky: var(--c-accent-sky);
+  --color-accent-yellow: var(--c-accent-yellow);
+  --color-logo-card-bg: var(--c-logo-card-bg);
+  --color-logo-card-border: var(--c-logo-card-border);
+  --color-logo-card-shadow: var(--c-logo-card-shadow);
+  --color-bg: var(--c-bg);
+  --color-surface: var(--c-surface);
+  --color-border: var(--c-border);
+  --color-border-strong: var(--c-border-strong);
+  --color-text: var(--c-text);
+  --color-text-muted: var(--c-text-muted);
+  --color-text-subtle: var(--c-text-subtle);
+  --color-sidebar: var(--c-sidebar);
+  --color-sidebar-hover: var(--c-sidebar-hover);
+  --color-sidebar-active: var(--c-sidebar-active);
+  --color-ring: var(--c-ring);
+  --color-card-shadow: var(--c-card-shadow);
+  /* Semantic */
+  --color-success: var(--c-success);
+  --color-amber: var(--c-amber);
+  --color-invalid: var(--c-invalid);
+  --color-danger-bg: var(--c-danger-bg);
+  --color-danger-border: var(--c-danger-border);
+  --color-danger-text: var(--c-danger-text);
+  --color-danger-strong: var(--c-danger-strong);
+  --color-warning-bg: var(--c-warning-bg);
+  --color-warning-border: var(--c-warning-border);
+  --color-warning-text: var(--c-warning-text);
+  --color-placeholder-bg: var(--c-placeholder-bg);
+  --color-placeholder-icon: var(--c-placeholder-icon);
+  /* Status */
+  --color-status-available-bg: var(--c-st-avail-bg);
+  --color-status-available-text: var(--c-st-avail-text);
+  --color-status-available-border: var(--c-st-avail-border);
+  --color-status-retrieved-bg: var(--c-st-ret-bg);
+  --color-status-retrieved-text: var(--c-st-ret-text);
+  --color-status-retrieved-border: var(--c-st-ret-border);
+  --color-status-pending-bg: var(--c-st-pend-bg);
+  --color-status-pending-text: var(--c-st-pend-text);
+  --color-status-pending-border: var(--c-st-pend-border);
+}
+
+/* ── Light theme (default) ─────────────────────────────── */
+:root {
+  color-scheme: light;
+  /* Brand blue — the lupa/"Localiza" blue, primary interactive color */
+  --c-primary: #155289;
+  --c-primary-dark: #103F69;
+  --c-primary-light: #E6EEF5;
+  --c-on-primary: #FFFFFF;
+  --c-primary-disabled: #9BB4C8;
+  /* Brand light blue — the "Aê" blue, support / link / hover */
+  --c-secondary: #5AA0D2;
+  --c-secondary-strong: #2C6FA0;
+  /* Brand orange — the maleta / tagline accent; primary highlight + "disponível" */
+  --c-accent: #E68C28;
+  --c-accent-dark: #A85608;
+  --c-accent-light: #FBEBD8;
+  /* Vibrant sky blue from the inner lens — decorative accent only, never a button */
+  --c-accent-sky: #2E9CC4;
+  /* Umbrella yellow — rare decorative accent, never a status or button */
+  --c-accent-yellow: #D69A00;
+  /* Near-white brand seal behind the logo — nearly blends with the page here */
+  --c-logo-card-bg: #FCFCFA;
+  --c-logo-card-border: #E7E5DD;
+  --c-logo-card-shadow: rgba(15,23,46,0.06);
+  /* Warm off-white ground, never pure white */
+  --c-bg: #F6F5F1;
+  --c-surface: #FFFFFF;
+  --c-border: #E5E3DC;
+  --c-border-strong: #CFCCC2;
+  --c-text: #1A2A3A;
+  --c-text-muted: #5C6672;
+  --c-text-subtle: #949AA3;
+  /* Neutral graphite/chumbo sidebar — no blue tint, so it won't compete with the logo's navy ring */
+  --c-sidebar: #ffffff;
+  --c-sidebar-text: rgba(30,32,36,0.85);
+  --c-sidebar-text-muted: rgba(30,32,36,0.50);
+  --c-sidebar-hover: rgba(21,82,137,0.07);
+  --c-sidebar-hover-text: #155289;
+  --c-sidebar-active: rgba(230,140,40,0.15);
+  --c-sidebar-active-text: #c47010;
+  --c-ring: rgba(21,82,137,0.16);
+  --c-card-shadow: rgba(15,23,42,0.07);
+  --c-success: #157F3C;
+  --c-amber: #B4560A;
+  --c-invalid: #E0736F;
+  --c-danger-bg: #FEF2F2;
+  --c-danger-border: #FECACA;
+  --c-danger-text: #B42318;
+  --c-danger-strong: #C4372B;
+  --c-warning-bg: #FBF5E7;
+  --c-warning-border: #F1D8B4;
+  --c-warning-text: #92400E;
+  --c-placeholder-bg: #EEF0F2;
+  --c-placeholder-icon: #C3C9D1;
+  --c-st-avail-bg: #FDEEDD;
+  --c-st-avail-text: #9C4A06;
+  --c-st-avail-border: #F7D2AC;
+  --c-st-ret-bg: #EDF3EE;
+  --c-st-ret-text: #3D6B4C;
+  --c-st-ret-border: #CFE0D3;
+  --c-st-pend-bg: #E6EFF6;
+  --c-st-pend-text: #155289;
+  --c-st-pend-border: #C6DBEC;
+}
+
+/* ── Dark theme ────────────────────────────────────────── */
+.dark {
+  color-scheme: dark;
+  /* Brand light blue leads on dark — reads as link/text; pairs with dark on-primary */
+  --c-primary: #5AA0D2;
+  --c-primary-dark: #7DB4DE;
+  --c-primary-light: #1B2A37;
+  --c-on-primary: #0E1319;
+  --c-primary-disabled: #3C5064;
+  --c-secondary: #7DB4DE;
+  --c-secondary-strong: #5AA0D2;
+  /* Brand orange — a touch brighter and slightly desaturated for the dark ground */
+  --c-accent: #F0A85E;
+  --c-accent-dark: #E68C28;
+  --c-accent-light: #2A1E12;
+  /* Lighter, softened sky + umbrella accents for the dark ground */
+  --c-accent-sky: #6BC3E0;
+  --c-accent-yellow: #E8C25A;
+  /* Intentional light brand seal — contrasts the dark ground so the logo's dark ring stays legible */
+  --c-logo-card-bg: #EEF0F2;
+  --c-logo-card-border: #D3D7DC;
+  --c-logo-card-shadow: rgba(0,0,0,0.45);
+  /* Graphite ground, never pure black */
+  --c-bg: #14161A;
+  --c-surface: #1C1F26;
+  --c-border: #2B2F38;
+  --c-border-strong: #3C424E;
+  --c-text: #F0F2F6;
+  --c-text-muted: #BEC5D0;
+  --c-text-subtle: #909AAA;
+  --c-sidebar: #16171B;
+  --c-sidebar-text: rgba(255,255,255,0.80);
+  --c-sidebar-text-muted: rgba(255,255,255,0.50);
+  --c-sidebar-hover: rgba(90,160,210,0.12);
+  --c-sidebar-hover-text: #8FC0E6;
+  --c-sidebar-active: rgba(240,168,94,0.20);
+  --c-sidebar-active-text: #F4B066;
+  --c-ring: rgba(90,160,210,0.32);
+  --c-card-shadow: rgba(0,0,0,0.4);
+  --c-success: #4FB477;
+  --c-amber: #F4A85A;
+  --c-invalid: #C46B67;
+  --c-danger-bg: #2A1618;
+  --c-danger-border: #4B2A2C;
+  --c-danger-text: #EFA3A0;
+  --c-danger-strong: #EF8A85;
+  --c-warning-bg: #2A2313;
+  --c-warning-border: #4A3E1F;
+  --c-warning-text: #E6BE68;
+  --c-placeholder-bg: #232834;
+  --c-placeholder-icon: #3D4656;
+  --c-st-avail-bg: #2A1E12;
+  --c-st-avail-text: #F2A155;
+  --c-st-avail-border: #4A3620;
+  --c-st-ret-bg: #16261C;
+  --c-st-ret-text: #74CE97;
+  --c-st-ret-border: #2A4A36;
+  --c-st-pend-bg: #16242F;
+  --c-st-pend-text: #7DB4DE;
+  --c-st-pend-border: #294254;
+}
+
+* { box-sizing: border-box; }
+
+html {
+  font-family: var(--font-sans);
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* ── Modern hover card lift ──────────────────────────────── */
+.card-hover {
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+  will-change: transform;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px var(--color-card-shadow);
+  border-color: var(--color-border-strong) !important;
+}
+
+.card-hover-sm {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  will-change: transform;
+}
+.card-hover-sm:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px var(--color-card-shadow);
+}
+
+/* ── Smooth button press feel ────────────────────────────── */
+.btn-primary {
+  transition: background 0.14s ease, transform 0.1s ease, box-shadow 0.14s ease;
+}
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(21, 82, 137, 0.28);
+}
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-subtle); }
+
+::selection { background: rgba(180,83,9,0.18); }
+
+input, select, textarea, button { font-family: inherit; }
+
+/* Admin form: single column on mobile, two columns from medium screens up */
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px 14px;
+}
+@media (min-width: 640px) {
+  .admin-form-grid { grid-template-columns: 1fr 1fr; }
+}
+
+/* Mural search + filters: stack vertically below 480px instead of squeezing */
+.mural-filters {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+@media (max-width: 480px) {
+  .mural-filters { flex-direction: column; align-items: stretch; }
+  .mural-filters > * { width: 100%; flex: none; }
+  .mural-filters input,
+  .mural-filters select { width: 100%; box-sizing: border-box; }
+}
+
+/* Horizontally scrollable tables — subtle shadow hint on the scrollable edges */
+.table-scroll {
+  overflow-x: auto;
+  background:
+    linear-gradient(to right, var(--color-surface) 30%, rgba(0, 0, 0, 0)) left center / 24px 100% no-repeat,
+    linear-gradient(to left, var(--color-surface) 30%, rgba(0, 0, 0, 0)) right center / 24px 100% no-repeat,
+    radial-gradient(farthest-side at 0 50%, var(--color-card-shadow), rgba(0, 0, 0, 0)) left center / 14px 100% no-repeat,
+    radial-gradient(farthest-side at 100% 50%, var(--color-card-shadow), rgba(0, 0, 0, 0)) right center / 14px 100% no-repeat;
+  background-attachment: local, local, scroll, scroll;
+}
+
+/* Reports: analytical cards stack cleanly without compressing chart labels. */
+.report-charts-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(280px, 0.85fr);
+  gap: 12px;
+  align-items: stretch;
+}
+
+@media (max-width: 820px) {
+  .report-charts-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ── Accessibility: focus-visible outline ───────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ── Print / PDF ─────────────────────────────────────────── */
+@media print {
+  .no-print { display: none !important; }
+  body { background: #fff !important; color: #000 !important; }
+}
