@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect, useRef } from 'react'
 import AdminShell from '../components/AdminShell'
-import { errorMessage } from '../services/api'
+import { api, errorMessage } from '../services/api'
 import StatusBadge from '../components/StatusBadge'
 import UnsavedChangesModal from '../components/UnsavedChangesModal'
 import { Package, Check, AlertCircle } from '../components/Icons'
@@ -21,22 +21,30 @@ export default function AdminRetirada({
   onNavigate,
   onLogout,
 }) {
-  const availableItems = items.filter((i) => i.status === 'disponivel')
+  // Disponíveis e pendentes (pendente = alguém já fez o pedido pelo mural); pendentes primeiro.
+  const availableItems = items
+    .filter((i) => i.status === 'disponivel' || i.status === 'pendente')
+    .sort((a, b) => (a.status === 'pendente' ? 0 : 1) - (b.status === 'pendente' ? 0 : 1))
+  const blankForm = (itemId) => ({
+    itemId,
+    cpf: '',
+    nome: '',
+    sobrenome: '',
+    ddd: '',
+    telefone: '',
+    tipoUsuario: 'Aluno',
+    comprovacao: '',
+  })
   const initialForm = useMemo(
-    () => ({
-      itemId: selectedItemId ?? availableItems[0]?.id ?? '',
-      cpf: '',
-      nome: '',
-      sobrenome: '',
-      ddd: '',
-      telefone: '',
-      tipoUsuario: 'Aluno',
-      comprovacao: '',
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }),
+    () => blankForm(selectedItemId ?? availableItems[0]?.id ?? ''),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   )
   const [form, setForm] = useState(initialForm)
+  // Estado de referência para detectar alterações (muda quando preenchemos a partir da solicitação)
+  const [baseline, setBaseline] = useState(initialForm)
+  const [claimInfo, setClaimInfo] = useState({ state: 'idle' })
+  const filledFromClaim = useRef(false)
   const [errors, setErrors] = useState({})
   const [step, setStep] = useState(1)
   const [done, setDone] = useState(false)
@@ -50,7 +58,7 @@ export default function AdminRetirada({
       if (timerRef.current) clearTimeout(timerRef.current)
     }
   }, [])
-  const isDirty = !done && JSON.stringify(form) !== JSON.stringify(initialForm)
+  const isDirty = !done && JSON.stringify(form) !== JSON.stringify(baseline)
   const guardedNavigate = (s) => {
     if (isDirty) setPending({ type: 'screen', screen: s })
     else onNavigate(s)
@@ -67,6 +75,60 @@ export default function AdminRetirada({
     else onNavigate(dest.screen)
   }
   const selectedItem = items.find((i) => i.id === form.itemId)
+  const selectedStatus = selectedItem?.status
+
+  // Item pendente: busca a solicitação feita no mural e preenche os dados do solicitante.
+  useEffect(() => {
+    const clearFilled = () => {
+      if (!filledFromClaim.current) return
+      filledFromClaim.current = false
+      const blank = blankForm(form.itemId)
+      setForm(blank)
+      setBaseline(blank)
+    }
+    if (!form.itemId || selectedStatus !== 'pendente') {
+      setClaimInfo({ state: 'idle' })
+      clearFilled()
+      return
+    }
+    let cancelled = false
+    setClaimInfo({ state: 'loading' })
+    api
+      .getItemClaims(form.itemId)
+      .then((claims) => {
+        if (cancelled) return
+        const c = claims[0] // a mais recente
+        if (!c) {
+          clearFilled()
+          setClaimInfo({ state: 'missing' })
+          return
+        }
+        const filled = {
+          itemId: form.itemId,
+          cpf: maskCPF(c.cpf),
+          nome: c.nome,
+          sobrenome: c.sobrenome,
+          ddd: c.ddd,
+          telefone: maskPhone(c.telefone),
+          tipoUsuario: c.tipoUsuario,
+          comprovacao: c.comprovacao,
+        }
+        filledFromClaim.current = true
+        setForm(filled)
+        setBaseline(filled)
+        setErrors({})
+        setClaimInfo({ state: 'filled', date: c.createdAt })
+      })
+      .catch((err) => {
+        if (cancelled) return
+        clearFilled()
+        setClaimInfo({ state: 'error', message: errorMessage(err) })
+      })
+    return () => {
+      cancelled = true
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.itemId, selectedStatus])
   const set = (k, v) => {
     setForm((p) => ({ ...p, [k]: v }))
     setErrors((p) => ({ ...p, [k]: undefined }))
@@ -237,7 +299,7 @@ export default function AdminRetirada({
             <Section title="Item">
               <div>
                 <label htmlFor="ret-item" style={lbl}>
-                  Selecionar item disponível
+                  Selecionar item (disponível ou pendente)
                 </label>
                 <select
                   id="ret-item"
@@ -247,6 +309,7 @@ export default function AdminRetirada({
                 >
                   {availableItems.map((i) => (
                     <option key={i.id} value={i.id}>
+                      {i.status === 'pendente' ? '[Pendente] ' : ''}
                       {i.name} — {i.locationPublic}
                     </option>
                   ))}
@@ -276,6 +339,31 @@ export default function AdminRetirada({
                     <div style={{ marginLeft: 'auto' }}>
                       <StatusBadge status={selectedItem.status} size="sm" />
                     </div>
+                  </div>
+                )}
+                {claimInfo.state !== 'idle' && (
+                  <div
+                    role="status"
+                    style={{
+                      marginTop: 8,
+                      padding: '8px 10px',
+                      fontSize: 12,
+                      borderRadius: 6,
+                      background: claimInfo.state === 'error' ? 'var(--color-danger-bg)' : 'var(--color-bg)',
+                      border: `1px solid ${
+                        claimInfo.state === 'error' ? 'var(--color-danger-border)' : 'var(--color-border)'
+                      }`,
+                      color: claimInfo.state === 'error' ? 'var(--color-danger-text)' : 'var(--color-text-muted)',
+                    }}
+                  >
+                    {claimInfo.state === 'loading' && 'Carregando a solicitação feita no mural…'}
+                    {claimInfo.state === 'filled' &&
+                      `Dados preenchidos a partir da solicitação feita no mural em ${new Date(
+                        claimInfo.date,
+                      ).toLocaleDateString('pt-BR')}. Confira o documento do solicitante antes de continuar.`}
+                    {claimInfo.state === 'missing' &&
+                      'Este item está pendente, mas não há solicitação registrada. Preencha os dados manualmente.'}
+                    {claimInfo.state === 'error' && claimInfo.message}
                   </div>
                 )}
               </div>

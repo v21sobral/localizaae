@@ -66,6 +66,7 @@ export const api = {
 
   // Administração
   getAdminItems: () => request('GET', '/admin/itens'),
+  getItemClaims: (id) => request('GET', `/admin/itens/${id}/solicitacoes`),
   createItem: (item) => request('POST', '/admin/itens', item),
   updateItem: (id, item) => request('PUT', `/admin/itens/${id}`, item),
   deleteItem: (id) => request('DELETE', `/admin/itens/${id}`),

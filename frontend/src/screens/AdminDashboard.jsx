@@ -363,7 +363,7 @@ export default function AdminDashboard({ items, onNavigate, onLogout, onDelete }
                           Icon={Pencil}
                           onClick={() => onNavigate('admin-item-form', { editId: item.id })}
                         />
-                        {item.status === 'disponivel' && (
+                        {(item.status === 'disponivel' || item.status === 'pendente') && (
                           <TblAction
                             label="Retirada"
                             Icon={CheckCircle}

@@ -80,6 +80,8 @@ export default function App() {
   const [adminSection, setAdminSection] = useState('dashboard')
   const [_skipHashWrite, setSkipHashWrite] = useState(false)
   const savingRef = useRef(false)
+  // Hash da URL no carregamento (o efeito tela→hash o sobrescreve antes de a sessão ser restaurada)
+  const initialHash = useRef(window.location.hash)
   const categories = categoryList.map((c) => c.name)
   const showError = useCallback((err) => setToast(errorMessage(err)), [])
 
@@ -110,7 +112,7 @@ export default function App() {
       .then(({ user }) => {
         setIsAdmin(true)
         setLoggedInUser(user.email)
-        const { screen: s } = hashToScreen(window.location.hash, true)
+        const { screen: s } = hashToScreen(initialHash.current, true)
         if (ADMIN_SCREENS.includes(s)) setScreen(s)
       })
       .catch(() => setToken(null))
@@ -128,6 +130,11 @@ export default function App() {
     window.addEventListener('localiza:session-expired', onExpired)
     return () => window.removeEventListener('localiza:session-expired', onExpired)
   }, [loadData])
+
+  // Ao abrir o dashboard ou as retiradas, recarrega os itens (pode haver novos pedidos do mural).
+  useEffect(() => {
+    if (isAdmin && (screen === 'admin-dashboard' || screen === 'admin-retirada')) loadData()
+  }, [isAdmin, screen, loadData])
 
   // Some o aviso de erro sozinho
   useEffect(() => {
@@ -332,7 +339,6 @@ export default function App() {
             setIsAdmin(true)
             setLoggedInUser(user.email)
             setScreen('admin-dashboard')
-            loadData()
           }}
           onBack={() => setScreen('mural')}
         />
@@ -415,7 +421,6 @@ export default function App() {
                 onConfirm={(itemId) => {
                   setItems((prev) => prev.map((i) => (i.id === itemId ? { ...i, status: 'retirado' } : i)))
                   setScreen('admin-dashboard')
-                  loadData()
                 }}
                 onCancel={() => setScreen('admin-dashboard')}
                 onNavigate={(s, opts) => navigate(s, opts)}
