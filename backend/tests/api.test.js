@@ -160,3 +160,12 @@ test('retirada: marca como retirado, mantém histórico após excluir o item e a
   assert.ok(ret1)
   assert.equal(ret1.user, 'admin@localiza.ae')
 })
+
+test('retirada de item pendente (pedido feito no mural) é aceita', async () => {
+  const item = (await api('POST', '/admin/itens', { auth: token, body: novoItem({ name: 'Item Pendente' }) })).data
+  assert.equal((await api('POST', `/itens/${item.id}/solicitacoes`, { body: solicitante() })).status, 201)
+  assert.equal((await api('GET', `/itens/${item.id}`)).data.status, 'pendente')
+  const ok = await api('POST', '/admin/retiradas', { auth: token, body: { itemId: item.id, ...solicitante() } })
+  assert.equal(ok.status, 201)
+  assert.equal((await api('GET', `/itens/${item.id}`)).data.status, 'retirado')
+})
