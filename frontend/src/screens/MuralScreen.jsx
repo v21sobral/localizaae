@@ -5,6 +5,15 @@ import Logo from '../components/Logo'
 import ThemeToggle from '../components/ThemeToggle'
 import headerBg from '../assets/header-bg.jpg'
 import { formatDate } from '../utils/date'
+// Container centralizado: ocupa a largura toda até 1600px, com margem lateral fluida
+const CONTAINER = {
+  '--page-gutter': 'clamp(16px, 3vw, 48px)',
+  width: '100%',
+  maxWidth: 1600,
+  margin: '0 auto',
+  boxSizing: 'border-box',
+}
+
 export default function MuralScreen({ items, categories, onItemClick, onAdminClick }) {
   const [search, setSearch] = useState('')
   const [filterStatus, setFilterStatus] = useState('all')
@@ -83,9 +92,8 @@ export default function MuralScreen({ items, categories, onItemClick, onAdminCli
           style={{
             position: 'relative',
             zIndex: 1,
-            maxWidth: 1160,
-            margin: '0 auto',
-            padding: '0 24px',
+            ...CONTAINER,
+            padding: '0 var(--page-gutter)',
             height: 132,
             display: 'flex',
             alignItems: 'center',
@@ -124,7 +132,7 @@ export default function MuralScreen({ items, categories, onItemClick, onAdminCli
 
       {/* Page header */}
       <div style={{ background: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)' }}>
-        <div style={{ maxWidth: 1160, margin: '0 auto', padding: '20px 24px' }}>
+        <div style={{ ...CONTAINER, padding: '20px var(--page-gutter)' }}>
           <div
             style={{
               display: 'flex',
@@ -164,7 +172,7 @@ export default function MuralScreen({ items, categories, onItemClick, onAdminCli
 
       {/* Filters */}
       <div style={{ background: 'var(--color-surface)', borderBottom: '1px solid var(--color-border)' }}>
-        <div className="mural-filters" style={{ maxWidth: 1160, margin: '0 auto', padding: '12px 24px' }}>
+        <div className="mural-filters" style={{ ...CONTAINER, padding: '12px var(--page-gutter)' }}>
           <div style={{ position: 'relative', flex: '1 1 auto', minWidth: 0, width: '100%' }}>
             <span
               style={{
@@ -267,7 +275,7 @@ export default function MuralScreen({ items, categories, onItemClick, onAdminCli
       </div>
 
       {/* Results */}
-      <main style={{ maxWidth: 1160, margin: '0 auto', padding: '24px 24px' }}>
+      <main style={{ ...CONTAINER, padding: '24px var(--page-gutter)' }}>
         {filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '64px 20px' }}>
             <div
