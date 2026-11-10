@@ -9,7 +9,7 @@ import { formatDate } from '../utils/date'
 const CONTAINER = {
   '--page-gutter': 'clamp(16px, 3vw, 48px)',
   width: '100%',
-  maxWidth: 1600,
+  maxWidth: none,
   margin: '0 auto',
   boxSizing: 'border-box',
 }
