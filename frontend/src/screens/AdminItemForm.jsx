@@ -288,15 +288,15 @@ export default function AdminItemForm({
                   padding: '9px 14px',
                   border: 'none',
                   borderRadius: 6,
-                  background: 'var(--color-accent)',
+                  background: '#e17200',
                   color: '#ffffff',
                   fontSize: 13,
                   fontWeight: 600,
                   cursor: 'pointer',
                   transition: 'background 0.14s ease, transform 0.1s ease',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--color-accent-dark)')}
-                onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--color-accent)')}
+                onMouseEnter={(e) => (e.currentTarget.style.background = '#c76400')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = '#e17200')}
               >
                 <Upload size={15} strokeWidth={2} />
                 Escolher foto do computador
