@@ -3,7 +3,7 @@ import AdminShell from '../components/AdminShell'
 import { api, errorMessage } from '../services/api'
 import StatusBadge from '../components/StatusBadge'
 import UnsavedChangesModal from '../components/UnsavedChangesModal'
-import { Package, Check, AlertCircle } from '../components/Icons'
+import { Package, Check, AlertCircle, Printer } from '../components/Icons'
 import { isValidCPF, isValidPhone, maskPhone } from '../utils/validators'
 const maskCPF = (v) =>
   v
@@ -49,6 +49,9 @@ export default function AdminRetirada({
   const [step, setStep] = useState(1)
   const [done, setDone] = useState(false)
   const [confirming, setConfirming] = useState(false)
+  const [printAttempted, setPrintAttempted] = useState(false)
+  const [printWarningOpen, setPrintWarningOpen] = useState(false)
+  const [printDate, setPrintDate] = useState(() => new Date())
   const [submitError, setSubmitError] = useState('')
   const [pending, setPending] = useState(null)
   const timerRef = useRef(null)
@@ -132,6 +135,7 @@ export default function AdminRetirada({
   const set = (k, v) => {
     setForm((p) => ({ ...p, [k]: v }))
     setErrors((p) => ({ ...p, [k]: undefined }))
+    setPrintAttempted(false)
   }
   const validate = () => {
     const e = {}
@@ -149,7 +153,14 @@ export default function AdminRetirada({
   }
   const handleNext = (e) => {
     e.preventDefault()
-    if (validate()) setStep(2)
+    if (validate()) {
+      setPrintDate(new Date())
+      setStep(2)
+    }
+  }
+  const handlePrint = () => {
+    window.print()
+    setPrintAttempted(true)
   }
   const handleConfirm = async () => {
     if (confirming) return
@@ -163,6 +174,13 @@ export default function AdminRetirada({
       setSubmitError(errorMessage(err))
       setConfirming(false)
     }
+  }
+  const requestConfirm = () => {
+    if (!printAttempted) {
+      setPrintWarningOpen(true)
+      return
+    }
+    handleConfirm()
   }
   const inp = (error) => ({
     width: '100%',
@@ -226,6 +244,129 @@ export default function AdminRetirada({
         onDiscard={discardAndContinue}
         onCancel={() => setPending(null)}
       />
+      {printWarningOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="withdrawal-print-warning-title"
+          onClick={() => setPrintWarningOpen(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 110,
+            background: 'rgba(15,23,42,0.55)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              width: '100%',
+              maxWidth: 440,
+              padding: 24,
+              background: 'var(--color-surface)',
+              border: '1px solid var(--color-border)',
+              borderRadius: 12,
+              boxShadow: '0 24px 60px -12px rgba(0,0,0,0.4)',
+            }}
+          >
+            <h2
+              id="withdrawal-print-warning-title"
+              style={{ margin: '0 0 8px', fontSize: 17, color: 'var(--color-text)' }}
+            >
+              Imprimir termo de retirada?
+            </h2>
+            <p style={{ margin: '0 0 20px', fontSize: 13, lineHeight: 1.5, color: 'var(--color-text-muted)' }}>
+              O termo tem duas vias para assinatura. A retirada pode ser confirmada sem imprimir, se necessário.
+            </p>
+            <div style={{ display: 'flex', justifyContent: 'flex-end', flexWrap: 'wrap', gap: 8 }}>
+              <button
+                type="button"
+                onClick={() => setPrintWarningOpen(false)}
+                style={{
+                  padding: '7px 12px',
+                  border: '1px solid var(--color-border)',
+                  background: 'var(--color-surface)',
+                  borderRadius: 6,
+                  fontSize: 12,
+                  color: 'var(--color-text)',
+                  cursor: 'pointer',
+                }}
+              >
+                Voltar
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setPrintWarningOpen(false)
+                  handleConfirm()
+                }}
+                style={{
+                  padding: '7px 12px',
+                  border: '1px solid var(--color-border)',
+                  background: 'var(--color-surface)',
+                  borderRadius: 6,
+                  fontSize: 12,
+                  color: 'var(--color-text)',
+                  cursor: 'pointer',
+                }}
+              >
+                Continuar sem imprimir
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setPrintWarningOpen(false)
+                  handlePrint()
+                }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '7px 12px',
+                  border: 'none',
+                  background: 'var(--color-primary)',
+                  borderRadius: 6,
+                  fontSize: 12,
+                  fontWeight: 500,
+                  color: 'var(--color-on-primary)',
+                  cursor: 'pointer',
+                }}
+              >
+                <Printer size={14} /> Imprimir termo
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      <div className="withdrawal-print-document">
+        {['Via da pessoa', 'Via da instituição'].map((copy) => (
+          <section className="withdrawal-print-copy" key={copy}>
+            <div className="withdrawal-print-heading">
+              <h1>Termo de retirada de objeto</h1>
+              <strong>{copy}</strong>
+            </div>
+            <p>
+              <strong>Objeto:</strong> {selectedItem?.name ?? ''}
+            </p>
+            <p>
+              <strong>Data da retirada:</strong> {printDate.toLocaleDateString('pt-BR')}
+            </p>
+            <p className="withdrawal-print-declaration">
+              Eu, <strong>{`${form.nome} ${form.sobrenome}`.trim()}</strong>, inscrito(a) no CPF{' '}
+              <strong>{form.cpf}</strong>, declaro que recebi o objeto identificado neste termo da instituição
+              responsável.
+            </p>
+            <div className="withdrawal-print-signature">
+              <span />
+              <span>Assinatura de quem retirou</span>
+            </div>
+          </section>
+        ))}
+      </div>
       <div style={{ maxWidth: 640 }}>
         <div style={{ marginBottom: 22 }}>
           <h1
@@ -653,7 +794,7 @@ export default function AdminRetirada({
               </div>
             )}
 
-            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
               <button
                 onClick={() => setStep(1)}
                 style={{
@@ -670,7 +811,27 @@ export default function AdminRetirada({
                 Voltar
               </button>
               <button
-                onClick={handleConfirm}
+                type="button"
+                onClick={handlePrint}
+                disabled={confirming}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                  padding: '7px 14px',
+                  border: '1px solid var(--color-border)',
+                  background: 'var(--color-surface)',
+                  borderRadius: 6,
+                  fontSize: 13,
+                  color: 'var(--color-text)',
+                  cursor: confirming ? 'not-allowed' : 'pointer',
+                  opacity: confirming ? 0.7 : 1,
+                }}
+              >
+                <Printer size={14} /> Imprimir termo
+              </button>
+              <button
+                onClick={requestConfirm}
                 disabled={confirming}
                 style={{
                   display: 'flex',

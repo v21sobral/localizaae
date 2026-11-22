@@ -291,7 +291,81 @@ input, select, textarea, button { font-family: inherit; }
 }
 
 /* ── Print / PDF ─────────────────────────────────────────── */
+.withdrawal-print-document {
+  display: none;
+}
+
 @media print {
   .no-print { display: none !important; }
-  body { background: #fff !important; color: #000 !important; }
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  body * {
+    visibility: hidden !important;
+  }
+  .withdrawal-print-document,
+  .withdrawal-print-document * {
+    visibility: visible !important;
+  }
+  .withdrawal-print-document {
+    display: block !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    color: #000;
+    font: 12pt Arial, sans-serif;
+  }
+  .withdrawal-print-copy {
+    box-sizing: border-box;
+    height: 138mm;
+    padding: 8mm 4mm;
+    page-break-inside: avoid;
+    border-bottom: 1px dashed #555;
+  }
+  .withdrawal-print-copy:last-child {
+    border-bottom: 0;
+  }
+  .withdrawal-print-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12mm;
+  }
+  .withdrawal-print-heading h1 {
+    margin: 0;
+    font-size: 16pt;
+  }
+  .withdrawal-print-heading strong {
+    font-size: 10pt;
+    text-transform: uppercase;
+  }
+  .withdrawal-print-copy p {
+    margin: 0 0 7mm;
+    line-height: 1.5;
+  }
+  .withdrawal-print-declaration {
+    margin-top: 12mm !important;
+  }
+  .withdrawal-print-signature {
+    display: flex;
+    flex-direction: column;
+    width: 75mm;
+    margin: 20mm auto 0;
+    text-align: center;
+  }
+  .withdrawal-print-signature span:first-child {
+    min-height: 10mm;
+    border-bottom: 1px solid #000;
+  }
+  .withdrawal-print-signature span:last-child {
+    margin-top: 2mm;
+    font-size: 9pt;
+  }
 }
