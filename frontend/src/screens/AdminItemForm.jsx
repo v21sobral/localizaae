@@ -281,7 +281,6 @@ export default function AdminItemForm({
               <button
                 type="button"
                 onClick={() => imageInputRef.current?.click()}
-                className="btn-primary"
                 style={{
                   display: 'inline-flex',
                   alignItems: 'center',
@@ -289,12 +288,15 @@ export default function AdminItemForm({
                   padding: '9px 14px',
                   border: 'none',
                   borderRadius: 6,
-                  background: 'var(--color-primary)',
-                  color: 'var(--color-on-primary)',
+                  background: 'var(--color-accent)',
+                  color: '#ffffff',
                   fontSize: 13,
                   fontWeight: 600,
                   cursor: 'pointer',
+                  transition: 'background 0.14s ease, transform 0.1s ease',
                 }}
+                onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--color-accent-dark)')}
+                onMouseLeave={(e) => (e.currentTarget.style.background = 'var(--color-accent)')}
               >
                 <Upload size={15} strokeWidth={2} />
                 Escolher foto do computador
