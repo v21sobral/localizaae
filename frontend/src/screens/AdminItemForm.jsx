@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import AdminShell from '../components/AdminShell'
 import UnsavedChangesModal from '../components/UnsavedChangesModal'
 import { Upload } from '../components/Icons'
@@ -31,12 +31,43 @@ export default function AdminItemForm({
   const [form, setForm] = useState(initialForm)
   const [errors, setErrors] = useState({})
   const [imgError, setImgError] = useState(false)
+  const [imageFile, setImageFile] = useState(null)
+  const [filePreview, setFilePreview] = useState('')
+  const [imageUploadError, setImageUploadError] = useState('')
   const [pending, setPending] = useState(null)
-  const isDirty = JSON.stringify(form) !== JSON.stringify(initialForm)
+  const isDirty = JSON.stringify(form) !== JSON.stringify(initialForm) || imageFile !== null
+  useEffect(() => {
+    if (!imageFile) {
+      setFilePreview('')
+      return
+    }
+    const previewUrl = URL.createObjectURL(imageFile)
+    setFilePreview(previewUrl)
+    return () => URL.revokeObjectURL(previewUrl)
+  }, [imageFile])
   const set = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }))
     setErrors((prev) => ({ ...prev, [field]: undefined }))
     if (field === 'imageUrl') setImgError(false)
+  }
+  const handleImageFileChange = (e) => {
+    const file = e.target.files?.[0]
+    setImageUploadError('')
+    if (!file) return
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      setImageFile(null)
+      setImageUploadError('Escolha uma imagem JPEG, PNG ou WEBP.')
+      e.target.value = ''
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setImageFile(null)
+      setImageUploadError('A imagem deve ter no máximo 5 MB.')
+      e.target.value = ''
+      return
+    }
+    setImageFile(file)
+    setImgError(false)
   }
   const validate = () => {
     const e = {}
@@ -51,7 +82,7 @@ export default function AdminItemForm({
   const buildItem = () => ({ ...form, id: existing?.id ?? Date.now().toString() })
   const handleSubmit = (e) => {
     e.preventDefault()
-    if (validate()) onSave(buildItem())
+    if (validate()) onSave(buildItem(), imageFile)
   }
   const guardedNavigate = (s) => {
     if (isDirty) setPending({ type: 'screen', screen: s })
@@ -79,10 +110,11 @@ export default function AdminItemForm({
     }
     const dest = pending
     setPending(null)
-    const saved = await onSave(buildItem())
+    const saved = await onSave(buildItem(), imageFile)
     if (saved !== false) goToPending(dest)
   }
-  const hasImagePreview = !!form.imageUrl && !imgError
+  const previewImage = filePreview || form.imageUrl
+  const hasImagePreview = !!previewImage && !imgError
   return (
     <AdminShell active="admin-item-form" onNavigate={guardedNavigate} onLogout={guardedLogout}>
       <UnsavedChangesModal
@@ -220,15 +252,64 @@ export default function AdminItemForm({
 
           <FormSection
             title="Foto do item"
-            subtitle="Opcional — adicione uma URL de imagem para exibição no mural."
+            subtitle="Opcional — informe uma URL ou escolha uma imagem do seu computador."
           >
             <Input
               id="ifrm-img"
               value={form.imageUrl ?? ''}
-              onChange={(v) => set('imageUrl', v)}
+              onChange={(v) => {
+                set('imageUrl', v)
+                setImageFile(null)
+                setImageUploadError('')
+              }}
               placeholder="https://…"
               error={false}
             />
+            <div style={{ marginTop: 10 }}>
+              <label
+                htmlFor="ifrm-upload"
+                style={{ display: 'block', fontSize: 12, fontWeight: 500, color: 'var(--color-text)', marginBottom: 5 }}
+              >
+                Ou enviar uma imagem
+              </label>
+              <input
+                id="ifrm-upload"
+                key={imageFile ? 'file-selected' : 'no-file'}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                onChange={handleImageFileChange}
+                style={{ width: '100%', fontSize: 12, color: 'var(--color-text)' }}
+              />
+              <div style={{ fontSize: 11, color: 'var(--color-text-muted)', marginTop: 4 }}>
+                JPEG, PNG ou WEBP — até 5 MB.
+              </div>
+              {imageFile && (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
+                  <span style={{ fontSize: 11, color: 'var(--color-text-muted)' }}>
+                    Selecionada: {imageFile.name}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setImageFile(null)}
+                    style={{
+                      padding: 0,
+                      border: 'none',
+                      background: 'none',
+                      color: 'var(--color-primary)',
+                      fontSize: 11,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    Remover
+                  </button>
+                </div>
+              )}
+              {imageUploadError && (
+                <div role="alert" style={{ fontSize: 11, color: 'var(--color-danger-text)', marginTop: 4 }}>
+                  {imageUploadError}
+                </div>
+              )}
+            </div>
             <div
               style={{
                 marginTop: 10,
@@ -244,7 +325,7 @@ export default function AdminItemForm({
             >
               {hasImagePreview ? (
                 <img
-                  src={form.imageUrl}
+                  src={previewImage}
                   alt="Preview"
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   onError={() => setImgError(true)}

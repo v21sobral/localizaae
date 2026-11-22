@@ -79,6 +79,9 @@ Base: `/api`. Erros retornam `{ "error": "mensagem", "details": { campo: "motivo
 A auditoria é gravada pelo próprio back-end, na mesma transação da operação (login, cadastro, edição,
 exclusão, retirada e categorias).
 
+Cadastro e edição de item continuam aceitando JSON com `imageUrl`. Para enviar uma imagem do computador,
+use `multipart/form-data` com o arquivo no campo `image`; são aceitos JPEG, PNG e WEBP de até 5 MB.
+
 ## Testes
 
 ```bash
@@ -97,6 +100,10 @@ Use sempre um banco **separado** para testes: eles gravam dados.
 - **Back-end**: hospede em um serviço Node com HTTPS e um PostgreSQL gerenciado. Defina `NODE_ENV=production`,
   `DATABASE_URL`, `JWT_SECRET` (longo e aleatório), `CORS_ORIGIN` (incluindo `https://v21sobral.github.io`)
   e `PGSSL=true` se o provedor exigir.
+- **Fotos de itens**: crie no Supabase Storage um bucket público chamado `item-images` (ou configure
+  `SUPABASE_STORAGE_BUCKET`) e defina `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` somente no ambiente do
+  back-end. A chave `service_role` nunca deve ser publicada no front-end. Uploads feitos por administradores
+  aceitam JPEG, PNG ou WEBP de até 5 MB; a URL existente da foto continua disponível.
 
 ## Segurança e LGPD (resumo do que está implementado)
 

@@ -11,6 +11,9 @@ export const config = {
   port: Number(process.env.PORT || 3001),
   databaseUrl: process.env.DATABASE_URL || 'postgres://postgres:postgres@localhost:5432/localizaae',
   pgSsl: process.env.PGSSL === 'true',
+  supabaseUrl: process.env.SUPABASE_URL || '',
+  supabaseServiceRoleKey: process.env.SUPABASE_SERVICE_ROLE_KEY || '',
+  supabaseStorageBucket: process.env.SUPABASE_STORAGE_BUCKET || 'item-images',
   jwtSecret: process.env.JWT_SECRET || 'troque-este-segredo',
   jwtExpiresIn: process.env.JWT_EXPIRES_IN || '8h',
   corsOrigins: (process.env.CORS_ORIGIN || 'http://localhost:5173')

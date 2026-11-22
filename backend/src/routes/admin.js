@@ -1,10 +1,12 @@
 import { Router } from 'express'
 import { query, withTransaction } from '../db/pool.js'
 import { requireAdmin } from '../middleware/auth.js'
+import { itemImageUpload } from '../middleware/imageUpload.js'
 import { ITEM_SELECT, toItem, toCategoria, toAudit } from '../utils/serialize.js'
 import { parseId, parseItem, parseSolicitante, parseCategoriaNome } from '../utils/validators.js'
 import { badRequest, conflict, notFound } from '../utils/errors.js'
 import { logAudit } from '../utils/audit.js'
+import { cleanupItemImage, uploadItemImage } from '../utils/supabaseStorage.js'
 
 export const adminRouter = Router()
 adminRouter.use(requireAdmin)
@@ -28,46 +30,65 @@ adminRouter.get('/itens', async (_req, res) => {
   res.json(rows.map(adminItem))
 })
 
-adminRouter.post('/itens', async (req, res) => {
+adminRouter.post('/itens', itemImageUpload.single('image'), async (req, res) => {
   const d = parseItem(req.body)
-  const item = await withTransaction(async (db) => {
-    const categoriaId = await categoriaIdPorNome(db, d.categoria)
-    const { rows } = await db.query(
-      `INSERT INTO itens (nome, descricao, categoria_id, local_publico, local_detalhado, data_encontrado, status, imagem_url)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id`,
-      [d.nome, d.descricao, categoriaId, d.localPublico, d.localDetalhado, d.data, d.status, d.imagemUrl],
-    )
-    await logAudit(db, req.user.email, 'item-create', d.nome)
-    return buscarItem(db, rows[0].id)
-  })
-  res.status(201).json(adminItem(item))
+  const uploaded = req.file ? await uploadItemImage(req.file) : null
+  try {
+    const item = await withTransaction(async (db) => {
+      const categoriaId = await categoriaIdPorNome(db, d.categoria)
+      const { rows } = await db.query(
+        `INSERT INTO itens (nome, descricao, categoria_id, local_publico, local_detalhado, data_encontrado, status, imagem_url)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING id`,
+        [d.nome, d.descricao, categoriaId, d.localPublico, d.localDetalhado, d.data, d.status, uploaded?.imageUrl ?? d.imagemUrl],
+      )
+      await logAudit(db, req.user.email, 'item-create', d.nome)
+      return buscarItem(db, rows[0].id)
+    })
+    res.status(201).json(adminItem(item))
+  } catch (error) {
+    if (uploaded) await cleanupItemImage(uploaded.imageUrl)
+    throw error
+  }
 })
 
-adminRouter.put('/itens/:id', async (req, res) => {
+adminRouter.put('/itens/:id', itemImageUpload.single('image'), async (req, res) => {
   const id = parseId(req.params.id)
   const d = parseItem(req.body)
-  const item = await withTransaction(async (db) => {
-    const categoriaId = await categoriaIdPorNome(db, d.categoria)
-    const { rowCount } = await db.query(
-      `UPDATE itens SET nome=$1, descricao=$2, categoria_id=$3, local_publico=$4, local_detalhado=$5,
-              data_encontrado=$6, status=$7, imagem_url=$8, atualizado_em=now()
-        WHERE id=$9`,
-      [d.nome, d.descricao, categoriaId, d.localPublico, d.localDetalhado, d.data, d.status, d.imagemUrl, id],
-    )
-    if (!rowCount) throw notFound('Item não encontrado')
-    await logAudit(db, req.user.email, 'item-edit', d.nome)
-    return buscarItem(db, id)
-  })
-  res.json(adminItem(item))
+  const uploaded = req.file ? await uploadItemImage(req.file) : null
+  let oldImageUrl
+  try {
+    const item = await withTransaction(async (db) => {
+      const current = await db.query('SELECT imagem_url FROM itens WHERE id = $1 FOR UPDATE', [id])
+      if (!current.rows[0]) throw notFound('Item não encontrado')
+      oldImageUrl = current.rows[0].imagem_url
+      const categoriaId = await categoriaIdPorNome(db, d.categoria)
+      await db.query(
+        `UPDATE itens SET nome=$1, descricao=$2, categoria_id=$3, local_publico=$4, local_detalhado=$5,
+                data_encontrado=$6, status=$7, imagem_url=$8, atualizado_em=now()
+          WHERE id=$9`,
+        [d.nome, d.descricao, categoriaId, d.localPublico, d.localDetalhado, d.data, d.status, uploaded?.imageUrl ?? d.imagemUrl, id],
+      )
+      await logAudit(db, req.user.email, 'item-edit', d.nome)
+      return buscarItem(db, id)
+    })
+    const imageUrl = uploaded?.imageUrl ?? d.imagemUrl
+    if (oldImageUrl && oldImageUrl !== imageUrl) await cleanupItemImage(oldImageUrl)
+    res.json(adminItem(item))
+  } catch (error) {
+    if (uploaded) await cleanupItemImage(uploaded.imageUrl)
+    throw error
+  }
 })
 
 adminRouter.delete('/itens/:id', async (req, res) => {
   const id = parseId(req.params.id)
-  await withTransaction(async (db) => {
-    const { rows } = await db.query('DELETE FROM itens WHERE id = $1 RETURNING nome', [id])
+  const deleted = await withTransaction(async (db) => {
+    const { rows } = await db.query('DELETE FROM itens WHERE id = $1 RETURNING nome, imagem_url', [id])
     if (!rows[0]) throw notFound('Item não encontrado')
     await logAudit(db, req.user.email, 'item-delete', rows[0].nome)
+    return rows[0]
   })
+  await cleanupItemImage(deleted.imagem_url)
   res.status(204).end()
 })
 

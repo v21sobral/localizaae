@@ -182,14 +182,14 @@ export default function App() {
   const selectedItem = items.find((i) => i.id === selectedItemId) ?? null
 
   // ── Item handlers ────────────────────────────────────────
-  const handleSaveItem = async (item) => {
+  const handleSaveItem = async (item, imageFile) => {
     if (savingRef.current) return false
     savingRef.current = true
     try {
       const { id: _id, ...payload } = item
       const saved = editingItemId
-        ? await api.updateItem(editingItemId, payload)
-        : await api.createItem(payload)
+        ? await api.updateItem(editingItemId, payload, imageFile)
+        : await api.createItem(payload, imageFile)
       setItems((prev) =>
         editingItemId ? prev.map((i) => (i.id === editingItemId ? saved : i)) : [saved, ...prev],
       )

@@ -30,15 +30,16 @@ export const setToken = (token) => {
 
 async function request(method, path, body) {
   const token = getToken()
+  const isFormData = typeof FormData !== 'undefined' && body instanceof FormData
   let res
   try {
     res = await fetch(BASE + path, {
       method,
       headers: {
-        ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
+        ...(body !== undefined && !isFormData ? { 'Content-Type': 'application/json' } : {}),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
       },
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body: body !== undefined ? (isFormData ? body : JSON.stringify(body)) : undefined,
     })
   } catch {
     throw new ApiError(0, 'Não foi possível conectar ao servidor. Verifique sua conexão e tente novamente.')
@@ -54,6 +55,16 @@ async function request(method, path, body) {
   return data
 }
 
+function itemRequestBody(item, imageFile) {
+  if (!imageFile) return item
+  const formData = new FormData()
+  for (const [key, value] of Object.entries(item)) {
+    formData.append(key, value == null ? '' : String(value))
+  }
+  formData.append('image', imageFile)
+  return formData
+}
+
 export const api = {
   // Público
   getItems: () => request('GET', '/itens'),
@@ -67,8 +78,9 @@ export const api = {
   // Administração
   getAdminItems: () => request('GET', '/admin/itens'),
   getItemClaims: (id) => request('GET', `/admin/itens/${id}/solicitacoes`),
-  createItem: (item) => request('POST', '/admin/itens', item),
-  updateItem: (id, item) => request('PUT', `/admin/itens/${id}`, item),
+  createItem: (item, imageFile) => request('POST', '/admin/itens', itemRequestBody(item, imageFile)),
+  updateItem: (id, item, imageFile) =>
+    request('PUT', `/admin/itens/${id}`, itemRequestBody(item, imageFile)),
   deleteItem: (id) => request('DELETE', `/admin/itens/${id}`),
   createCategory: (name) => request('POST', '/admin/categorias', { name }),
   renameCategory: (id, name) => request('PUT', `/admin/categorias/${id}`, { name }),
