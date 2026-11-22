@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect, useRef } from 'react'
 import AdminShell from '../components/AdminShell'
 import UnsavedChangesModal from '../components/UnsavedChangesModal'
 import { Upload } from '../components/Icons'
@@ -34,6 +34,7 @@ export default function AdminItemForm({
   const [imageFile, setImageFile] = useState(null)
   const [filePreview, setFilePreview] = useState('')
   const [imageUploadError, setImageUploadError] = useState('')
+  const imageInputRef = useRef(null)
   const [pending, setPending] = useState(null)
   const isDirty = JSON.stringify(form) !== JSON.stringify(initialForm) || imageFile !== null
   useEffect(() => {
@@ -266,20 +267,38 @@ export default function AdminItemForm({
               error={false}
             />
             <div style={{ marginTop: 10 }}>
-              <label
-                htmlFor="ifrm-upload"
-                style={{ display: 'block', fontSize: 12, fontWeight: 500, color: 'var(--color-text)', marginBottom: 5 }}
-              >
-                Ou enviar uma imagem
-              </label>
               <input
                 id="ifrm-upload"
+                ref={imageInputRef}
                 key={imageFile ? 'file-selected' : 'no-file'}
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
                 onChange={handleImageFileChange}
-                style={{ width: '100%', fontSize: 12, color: 'var(--color-text)' }}
+                tabIndex={-1}
+                aria-hidden="true"
+                style={{ display: 'none' }}
               />
+              <button
+                type="button"
+                onClick={() => imageInputRef.current?.click()}
+                className="btn-primary"
+                style={{
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 8,
+                  padding: '9px 14px',
+                  border: 'none',
+                  borderRadius: 6,
+                  background: 'var(--color-primary)',
+                  color: 'var(--color-on-primary)',
+                  fontSize: 13,
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                }}
+              >
+                <Upload size={15} strokeWidth={2} />
+                Escolher foto do computador
+              </button>
               <div style={{ fontSize: 11, color: 'var(--color-text-muted)', marginTop: 4 }}>
                 JPEG, PNG ou WEBP — até 5 MB.
               </div>
