@@ -169,3 +169,19 @@ test('retirada de item pendente (pedido feito no mural) é aceita', async () => 
   assert.equal(ok.status, 201)
   assert.equal((await api('GET', `/itens/${item.id}`)).data.status, 'retirado')
 })
+
+test('item retirado some do mural após o prazo, mas continua na área administrativa', async () => {
+  const item = (await api('POST', '/admin/itens', { auth: token, body: novoItem({ name: 'Item Prazo' }) })).data
+  await api('POST', '/admin/retiradas', { auth: token, body: { itemId: item.id, ...solicitante() } })
+
+  // Recém-retirado: ainda aparece no mural
+  assert.ok((await api('GET', '/itens')).data.some((i) => i.id === item.id))
+
+  // Simula uma retirada feita há 30 dias (além do prazo padrão de 7)
+  await pool.query(`UPDATE retiradas SET criado_em = now() - interval '30 days' WHERE item_id = $1`, [item.id])
+  assert.ok(!(await api('GET', '/itens')).data.some((i) => i.id === item.id))
+  assert.equal((await api('GET', `/itens/${item.id}`)).status, 404)
+  assert.ok((await api('GET', '/admin/itens', { auth: token })).data.some((i) => i.id === item.id))
+
+  await api('DELETE', `/admin/itens/${item.id}`, { auth: token })
+})

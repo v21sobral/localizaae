@@ -4,6 +4,7 @@ import { query, withTransaction } from '../db/pool.js'
 import { ITEM_SELECT, toItem, toCategoria } from '../utils/serialize.js'
 import { parseId, parseSolicitante } from '../utils/validators.js'
 import { conflict, notFound } from '../utils/errors.js'
+import { config } from '../config.js'
 
 export const publicoRouter = Router()
 
@@ -15,6 +16,12 @@ const claimLimiter = rateLimit({
   message: { error: 'Muitas solicitações. Tente novamente mais tarde.' },
 })
 
+// Item retirado só aparece no Mural por `retiradoVisivelDias` dias após a retirada.
+// $N = número de dias; a data vem da retirada (ou, sem retirada registrada, da última atualização).
+const visivelNoMural = (n) => `(i.status <> 'retirado'
+  OR COALESCE((SELECT max(r.criado_em) FROM retiradas r WHERE r.item_id = i.id), i.atualizado_em)
+     > now() - make_interval(days => $${n}))`
+
 publicoRouter.get('/categorias', async (_req, res) => {
   const { rows } = await query('SELECT id, nome FROM categorias ORDER BY nome')
   res.json(rows.map(toCategoria))
@@ -22,13 +29,16 @@ publicoRouter.get('/categorias', async (_req, res) => {
 
 // Mural: nunca inclui `local_detalhado`.
 publicoRouter.get('/itens', async (_req, res) => {
-  const { rows } = await query(`${ITEM_SELECT} ORDER BY i.data_encontrado DESC, i.id DESC`)
+  const { rows } = await query(
+    `${ITEM_SELECT} WHERE ${visivelNoMural(1)} ORDER BY i.data_encontrado DESC, i.id DESC`,
+    [config.retiradoVisivelDias],
+  )
   res.json(rows.map((r) => toItem(r)))
 })
 
 publicoRouter.get('/itens/:id', async (req, res) => {
   const id = parseId(req.params.id)
-  const { rows } = await query(`${ITEM_SELECT} WHERE i.id = $1`, [id])
+  const { rows } = await query(`${ITEM_SELECT} WHERE i.id = $1 AND ${visivelNoMural(2)}`, [id, config.retiradoVisivelDias])
   if (!rows[0]) throw notFound('Item não encontrado')
   res.json(toItem(rows[0]))
 })
