@@ -99,7 +99,8 @@ Use sempre um banco **separado** para testes: eles gravam dados.
   (ex.: `https://sua-api.exemplo.com/api`).
 - **Back-end**: hospede em um serviço Node com HTTPS e um PostgreSQL gerenciado. Defina `NODE_ENV=production`,
   `DATABASE_URL`, `JWT_SECRET` (longo e aleatório), `CORS_ORIGIN` (incluindo `https://v21sobral.github.io`)
-  e `PGSSL=true` se o provedor exigir.
+  e `PGSSL=true` se o provedor exigir. Opcional: `RETIRADO_VISIVEL_DIAS` (padrão 7) define por quantos dias um
+  item retirado continua aparecendo no Mural público; depois disso ele só é visto na área administrativa.
 - **Fotos de itens**: crie no Supabase Storage um bucket público chamado `item-images` (ou configure
   `SUPABASE_STORAGE_BUCKET`) e defina `SUPABASE_URL` e `SUPABASE_SERVICE_ROLE_KEY` somente no ambiente do
   back-end. A chave `service_role` nunca deve ser publicada no front-end. Uploads feitos por administradores
