@@ -5,6 +5,8 @@ import StatusBadge from '../components/StatusBadge'
 import UnsavedChangesModal from '../components/UnsavedChangesModal'
 import { Package, Check, AlertCircle, Printer } from '../components/Icons'
 import { isValidCPF, isValidPhone, maskPhone } from '../utils/validators'
+import { formatDate } from '../utils/date'
+import logoPrint from '../assets/logo-animated.gif'
 const maskCPF = (v) =>
   v
     .replace(/\D/g, '')
@@ -20,6 +22,7 @@ export default function AdminRetirada({
   onCancel,
   onNavigate,
   onLogout,
+  adminEmail = '',
 }) {
   // Disponíveis e pendentes (pendente = alguém já fez o pedido pelo mural); pendentes primeiro.
   const availableItems = items
@@ -343,27 +346,85 @@ export default function AdminRetirada({
         </div>
       )}
       <div className="withdrawal-print-document">
-        {['Via da pessoa', 'Via da instituição'].map((copy) => (
+        {['Via da pessoa que retirou', 'Via da instituição'].map((copy) => (
           <section className="withdrawal-print-copy" key={copy}>
-            <div className="withdrawal-print-heading">
+            <header className="withdrawal-print-heading">
+              <img src={logoPrint} alt="Localiza Aê" />
               <h1>Termo de retirada de objeto</h1>
               <strong>{copy}</strong>
+            </header>
+
+            <h2>Objeto</h2>
+            <div className="withdrawal-print-grid">
+              <p>
+                <span>Item</span>
+                {selectedItem?.name ?? ''}
+              </p>
+              <p>
+                <span>Categoria</span>
+                {selectedItem?.category ?? ''}
+              </p>
+              <p>
+                <span>Local onde foi encontrado</span>
+                {selectedItem?.locationPublic ?? ''}
+              </p>
+              <p>
+                <span>Data do achado</span>
+                {selectedItem?.date ? formatDate(selectedItem.date) : ''}
+              </p>
+              <p className="withdrawal-print-wide">
+                <span>Descrição</span>
+                {selectedItem?.description ?? ''}
+              </p>
             </div>
-            <p>
-              <strong>Objeto:</strong> {selectedItem?.name ?? ''}
-            </p>
-            <p>
-              <strong>Data da retirada:</strong> {printDate.toLocaleDateString('pt-BR')}
-            </p>
+
+            <h2>Dados de quem retira</h2>
+            <div className="withdrawal-print-grid">
+              <p>
+                <span>Nome completo</span>
+                {`${form.nome} ${form.sobrenome}`.trim()}
+              </p>
+              <p>
+                <span>CPF</span>
+                {form.cpf}
+              </p>
+              <p>
+                <span>Telefone</span>
+                {`(${form.ddd}) ${form.telefone}`}
+              </p>
+              <p>
+                <span>Vínculo</span>
+                {form.tipoUsuario}
+              </p>
+              <p className="withdrawal-print-wide">
+                <span>Comprovação de posse</span>
+                {form.comprovacao}
+              </p>
+            </div>
+
             <p className="withdrawal-print-declaration">
-              Eu, <strong>{`${form.nome} ${form.sobrenome}`.trim()}</strong>, inscrito(a) no CPF{' '}
-              <strong>{form.cpf}</strong>, declaro que recebi o objeto identificado neste termo da instituição
-              responsável.
+              Declaro que recebi o objeto descrito neste termo e que as informações prestadas são verdadeiras.
+              Retirada realizada em {printDate.toLocaleDateString('pt-BR')} às{' '}
+              {printDate.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}.
             </p>
-            <div className="withdrawal-print-signature">
-              <span />
-              <span>Assinatura de quem retirou</span>
+
+            <div className="withdrawal-print-signatures">
+              <div className="withdrawal-print-signature">
+                <span />
+                <strong>Assinatura de quem retirou</strong>
+                <small>{`${form.nome} ${form.sobrenome}`.trim()} · CPF {form.cpf}</small>
+              </div>
+              <div className="withdrawal-print-signature">
+                <span />
+                <strong>Responsável pela entrega</strong>
+                <small>{adminEmail || 'Instituição'}</small>
+              </div>
             </div>
+
+            <footer className="withdrawal-print-footer">
+              Localiza Aê — Achou, Registrou, Localizou! · Dados tratados conforme a LGPD (Lei nº 13.709/2018),
+              apenas para controle da devolução.
+            </footer>
           </section>
         ))}
       </div>

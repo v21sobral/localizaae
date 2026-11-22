@@ -415,6 +415,7 @@ export default function App() {
             )}
             {screen === 'admin-retirada' && (
               <AdminRetirada
+                adminEmail={loggedInUser}
                 items={items}
                 selectedItemId={selectedItemId}
                 onSubmit={(form) => api.createWithdrawal(form)}
