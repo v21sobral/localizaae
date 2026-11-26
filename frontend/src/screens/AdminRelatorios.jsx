@@ -80,6 +80,7 @@ export default function AdminRelatorios({ items, categories, onNavigate, onLogou
   }
   return (
     <AdminShell active="admin-relatorios" onNavigate={onNavigate} onLogout={onLogout}>
+      <div className="report-print-document">
       <div
         style={{
           marginBottom: 22,
@@ -104,6 +105,11 @@ export default function AdminRelatorios({ items, categories, onNavigate, onLogou
           </h1>
           <p style={{ fontSize: 13, color: 'var(--color-text-muted)' }}>
             Análise de itens por período, categoria e status.
+          </p>
+          <p className="report-print-only" style={{ marginTop: 6, fontSize: 11, color: '#444' }}>
+            Período: {formatDate(dateFrom)} a {formatDate(dateTo)}
+            {filterStatus !== 'all' ? ` · Status: ${filterStatus === 'disponivel' ? 'Disponível' : filterStatus === 'retirado' ? 'Retirado' : 'Pendente'}` : ''}
+            {filterCategory !== 'all' ? ` · Categoria: ${filterCategory}` : ''}
           </p>
         </div>
         {/* Export buttons — hidden on print */}
@@ -458,6 +464,7 @@ export default function AdminRelatorios({ items, categories, onNavigate, onLogou
             </div>
           )}
         </div>
+      </div>
       </div>
     </AdminShell>
   )

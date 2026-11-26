@@ -295,8 +295,17 @@ input, select, textarea, button { font-family: inherit; }
   display: none;
 }
 
+.report-print-document {
+  display: block;
+}
+
+.report-print-only {
+  display: none;
+}
+
 @media print {
   .no-print { display: none !important; }
+  .report-print-only { display: block !important; }
   @page {
     size: A4 portrait;
     margin: 10mm;
@@ -305,12 +314,53 @@ input, select, textarea, button { font-family: inherit; }
     background: #fff !important;
     color: #000 !important;
   }
+  :root,
+  .dark {
+    --c-bg: #fff;
+    --c-surface: #fff;
+    --c-border: #ddd;
+    --c-border-strong: #aaa;
+    --c-text: #000;
+    --c-text-muted: #444;
+    --c-text-subtle: #666;
+    --c-primary: #155289;
+    --c-primary-dark: #103F69;
+    --c-primary-light: #E6EEF5;
+    --c-success: #157F3C;
+    --c-amber: #B4560A;
+  }
   body * {
     visibility: hidden !important;
   }
   .withdrawal-print-document,
   .withdrawal-print-document * {
     visibility: visible !important;
+  }
+  .report-print-document,
+  .report-print-document * {
+    visibility: visible !important;
+  }
+  .report-print-document {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    color: #000;
+  }
+  .report-print-document .report-charts-grid {
+    grid-template-columns: 1.5fr 0.85fr;
+  }
+  .report-print-document .table-scroll {
+    overflow: visible;
+  }
+  .report-print-document table {
+    page-break-inside: auto;
+  }
+  .report-print-document tr {
+    page-break-inside: avoid;
+  }
+  .report-print-document .card-hover-sm {
+    break-inside: avoid;
   }
   .withdrawal-print-document {
     display: block !important;
